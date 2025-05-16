@@ -255,6 +255,7 @@
 				DEVELOPMENT_TEAM = 68D4P32AKJ;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "We need camera access to take pictures";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "We need access to save photos to your custom albums.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "We need to access your photo library to read albums.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -286,6 +287,7 @@
 				DEVELOPMENT_TEAM = 68D4P32AKJ;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "We need camera access to take pictures";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "We need access to save photos to your custom albums.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "We need to access your photo library to read albums.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;

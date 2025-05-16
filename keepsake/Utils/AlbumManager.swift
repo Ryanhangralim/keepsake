@@ -7,9 +7,13 @@
 
 import Foundation
 import Photos
+import PhotosUI
 
 class AlbumManager: ObservableObject {
     @Published var albums: [PHAssetCollection] = []
+    
+    // Add prefix for album name
+    private let albumPrefix = "\u{200B}"
 
     init() {
         requestAuthorization()
@@ -29,14 +33,31 @@ class AlbumManager: ObservableObject {
         var collections: [PHAssetCollection] = []
         let userAlbums = PHAssetCollection.fetchAssetCollections(with: .album, subtype: .albumRegular, options: nil)
         userAlbums.enumerateObjects { collection, _, _ in
-            collections.append(collection)
+            if let title = collection.localizedTitle, title.hasPrefix(self.albumPrefix) {
+                collections.append(collection)
+            }
         }
-        self.albums = collections
+        
+        DispatchQueue.main.async {
+            self.albums = collections
+        }
     }
-
+    
     func createAlbum(named name: String) {
+        let fullName = albumPrefix + name
+
+        // Check if album already exists
+        let fetchOptions = PHFetchOptions()
+        fetchOptions.predicate = NSPredicate(format: "title = %@", fullName)
+        let existing = PHAssetCollection.fetchAssetCollections(with: .album, subtype: .albumRegular, options: fetchOptions)
+
+        if existing.firstObject != nil {
+            print("Album already exists.")
+            return
+        }
+
         PHPhotoLibrary.shared().performChanges({
-            _ = PHAssetCollectionChangeRequest.creationRequestForAssetCollection(withTitle: name)
+            _ = PHAssetCollectionChangeRequest.creationRequestForAssetCollection(withTitle: fullName)
         }) { success, error in
             if success {
                 DispatchQueue.main.async {
@@ -46,5 +67,22 @@ class AlbumManager: ObservableObject {
                 print("Error creating album: \(error?.localizedDescription ?? "unknown")")
             }
         }
+    }
+    
+    func saveImage(_ image: UIImage, to album: PHAssetCollection) {
+        PHPhotoLibrary.shared().performChanges({
+            let request = PHAssetChangeRequest.creationRequestForAsset(from: image)
+            guard let assetPlaceholder = request.placeholderForCreatedAsset,
+                  let albumChangeRequest = PHAssetCollectionChangeRequest(for: album) else {
+                return
+            }
+
+            let fastEnumeration = NSArray(array: [assetPlaceholder])
+            albumChangeRequest.addAssets(fastEnumeration)
+        }, completionHandler: { success, error in
+            if !success {
+                print("Error saving image to album: \(error?.localizedDescription ?? "unknown error")")
+            }
+        })
     }
 }

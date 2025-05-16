@@ -6,36 +6,49 @@
 //
 
 import SwiftUI
+import Photos
 
 struct ContentView: View {
     @StateObject private var albumManager = AlbumManager()
-        @State private var newAlbumName: String = ""
+    @State private var newAlbumName: String = ""
 
-        var body: some View {
-            NavigationView {
-                VStack {
-                    HStack {
-                        TextField("New album name", text: $newAlbumName)
-                            .textFieldStyle(RoundedBorderTextFieldStyle())
-                            .padding(.horizontal)
+    var body: some View {
+        NavigationView {
+            VStack {
+                HStack {
+                    TextField("New album name", text: $newAlbumName)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .padding(.horizontal)
 
-                        Button("Create") {
-                            let trimmedName = newAlbumName.trimmingCharacters(in: .whitespacesAndNewlines)
-                            guard !trimmedName.isEmpty else { return }
-                            albumManager.createAlbum(named: trimmedName)
-                            newAlbumName = ""
-                        }
-                        .padding(.trailing)
+                    Button("Create") {
+                        let trimmedName = newAlbumName.trimmingCharacters(in: .whitespacesAndNewlines)
+                        guard !trimmedName.isEmpty else { return }
+                        albumManager.createAlbum(named: trimmedName)
+                        newAlbumName = ""
                     }
-                    .padding(.top)
-
+                    .padding(.trailing)
+                }
+                .padding(.top)
+                
+                NavigationView {
                     List(albumManager.albums, id: \.localIdentifier) { album in
-                        Text(album.localizedTitle ?? "Unnamed Album")
+                        NavigationLink(destination: AlbumPhotosView(album: album)) {
+                            Text(album.localizedTitle?.replacingOccurrences(of: "\u{200B}", with: "") ?? "Unnamed")
+                        }
+                    }
+                    .navigationTitle("My Albums")
+                    .onAppear {
+                        PHPhotoLibrary.requestAuthorization { status in
+                            if status == .authorized || status == .limited {
+                                albumManager.loadAlbums()
+                            }
+                        }
                     }
                 }
-                .navigationTitle("My Albums")
             }
+            .navigationTitle("My Albums")
         }
+    }
 }
 
 #Preview {
