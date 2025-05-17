@@ -10,9 +10,22 @@
 		6E9C65B62DD6C8E700A6A1A8 /* keepsake.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = keepsake.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		6E4AE1BA2DD839C300BC5989 /* Exceptions for "keepsake" folder in "keepsake" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 6E9C65B52DD6C8E700A6A1A8 /* keepsake */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		6E9C65B82DD6C8E700A6A1A8 /* keepsake */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				6E4AE1BA2DD839C300BC5989 /* Exceptions for "keepsake" folder in "keepsake" target */,
+			);
 			path = keepsake;
 			sourceTree = "<group>";
 		};
@@ -255,6 +268,7 @@
 				DEVELOPMENT_TEAM = 68D4P32AKJ;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = keepsake/Info.plist;
 				INFOPLIST_KEY_NSCameraUsageDescription = "We need camera access to take pictures";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "We need access to save photos to your custom albums.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "We need to access your photo library to read albums.";
@@ -287,6 +301,7 @@
 				DEVELOPMENT_TEAM = 68D4P32AKJ;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = keepsake/Info.plist;
 				INFOPLIST_KEY_NSCameraUsageDescription = "We need camera access to take pictures";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "We need access to save photos to your custom albums.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "We need to access your photo library to read albums.";

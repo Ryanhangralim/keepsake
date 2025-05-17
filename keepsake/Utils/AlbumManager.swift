@@ -13,7 +13,7 @@ class AlbumManager: ObservableObject {
     @Published var albums: [PHAssetCollection] = []
     
     // Add prefix for album name
-    private let albumPrefix = "\u{200B}"
+    private let albumPrefix = "🌅 "
 
     init() {
         requestAuthorization()
