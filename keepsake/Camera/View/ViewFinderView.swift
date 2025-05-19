@@ -15,7 +15,7 @@ struct ViewfinderView: View {
             if let image = image {
                 image
                     .resizable()
-                    .scaledToFill()
+                    .scaledToFit()
                     .frame(width: geometry.size.width, height: geometry.size.height)
             }
         }

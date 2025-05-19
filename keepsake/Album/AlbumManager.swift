@@ -37,7 +37,7 @@ class AlbumManager: ObservableObject {
                 collections.append(collection)
             }
         }
-        
+
         DispatchQueue.main.async {
             self.albums = collections
         }

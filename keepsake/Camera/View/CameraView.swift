@@ -9,6 +9,8 @@ import SwiftUI
 
 struct CameraView: View {
     @StateObject var model: DataModel
+    @State private var isAlbumMenuVisible = false
+    @StateObject var albumManager: AlbumManager
  
     private static let barHeightFactor = 0.15
     
@@ -16,16 +18,17 @@ struct CameraView: View {
         
         NavigationStack {
             GeometryReader { geometry in
-                ViewfinderView(image:  $model.viewfinderImage )
+                ViewfinderView(image: $model.viewfinderImage)
+                    .id(model.selectedAlbumID) // forces the view to reload
                     .overlay(alignment: .top) {
                         Color.black
-                            .opacity(0.75)
+                            .opacity(0.50)
                             .frame(height: geometry.size.height * Self.barHeightFactor)
                     }
                     .overlay(alignment: .bottom) {
                         buttonsView()
                             .frame(height: geometry.size.height * Self.barHeightFactor)
-                            .background(.black.opacity(0.75))
+                            .background(.black.opacity(0.50))
                     }
                     .overlay(alignment: .center)  {
                         Color.clear
@@ -41,10 +44,16 @@ struct CameraView: View {
                 await model.loadPhotos()
                 await model.loadThumbnail()
             }
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    albumMenu()
+                }
+            }
             .navigationTitle(model.photoCollection.albumName ?? "Camera")
             .navigationBarTitleDisplayMode(.inline)
             .ignoresSafeArea()
             .statusBar(hidden: true)
+
         }
     }
     
@@ -102,6 +111,26 @@ struct CameraView: View {
         .padding()
     }
     
+    @ViewBuilder
+    private func albumMenu() -> some View {
+        Menu {
+            ForEach(albumManager.albums.filter { $0.localIdentifier != model.photoCollection.assetCollection?.localIdentifier }, id: \.localIdentifier) { album in
+                Button(action: {
+                    model.photoCollection = PhotoCollection(album: album)
+                    model.selectedAlbumID = album.localIdentifier
+                    Task {
+                        await model.loadPhotos()
+                        await model.loadThumbnail()
+                    }
+                }) {
+                    Text(album.localizedTitle ?? "Unnamed")
+                }
+            }
+        } label: {
+            Label("Change Album", systemImage: "folder")
+                .foregroundColor(.white)
+        }
+    }
 }
 
 //#Preview {

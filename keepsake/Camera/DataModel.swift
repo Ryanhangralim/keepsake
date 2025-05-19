@@ -16,6 +16,7 @@ final class DataModel: ObservableObject {
     
     @Published var viewfinderImage: Image?
     @Published var thumbnailImage: Image?
+    @Published var selectedAlbumID: String = ""
     
     var isPhotosLoaded = false
     
