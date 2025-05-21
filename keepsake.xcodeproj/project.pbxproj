@@ -6,11 +6,52 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		6E31AE8F2DDD5720004C2466 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E31AE8E2DDD5720004C2466 /* WidgetKit.framework */; };
+		6E31AE912DDD5720004C2466 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E31AE902DDD5720004C2466 /* SwiftUI.framework */; };
+		6E31AEA22DDD5722004C2466 /* keepsakeWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 6E31AE8C2DDD5720004C2466 /* keepsakeWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		6E31AEA02DDD5722004C2466 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E9C65AE2DD6C8E700A6A1A8 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6E31AE8B2DDD5720004C2466;
+			remoteInfo = keepsakeWidgetExtension;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		6E31AEA72DDD5722004C2466 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				6E31AEA22DDD5722004C2466 /* keepsakeWidgetExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		6E31AE8C2DDD5720004C2466 /* keepsakeWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = keepsakeWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		6E31AE8E2DDD5720004C2466 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		6E31AE902DDD5720004C2466 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		6E31AEA92DDD576B004C2466 /* keepsakeWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = keepsakeWidgetExtension.entitlements; sourceTree = "<group>"; };
 		6E9C65B62DD6C8E700A6A1A8 /* keepsake.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = keepsake.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		6E31AEA62DDD5722004C2466 /* Exceptions for "keepsakeWidget" folder in "keepsakeWidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 6E31AE8B2DDD5720004C2466 /* keepsakeWidgetExtension */;
+		};
 		6E4AE1BA2DD839C300BC5989 /* Exceptions for "keepsake" folder in "keepsake" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -21,6 +62,14 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		6E31AE922DDD5720004C2466 /* keepsakeWidget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				6E31AEA62DDD5722004C2466 /* Exceptions for "keepsakeWidget" folder in "keepsakeWidgetExtension" target */,
+			);
+			path = keepsakeWidget;
+			sourceTree = "<group>";
+		};
 		6E9C65B82DD6C8E700A6A1A8 /* keepsake */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
@@ -32,6 +81,15 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		6E31AE892DDD5720004C2466 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6E31AE912DDD5720004C2466 /* SwiftUI.framework in Frameworks */,
+				6E31AE8F2DDD5720004C2466 /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		6E9C65B32DD6C8E700A6A1A8 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -42,10 +100,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		6E31AE8D2DDD5720004C2466 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				6E31AE8E2DDD5720004C2466 /* WidgetKit.framework */,
+				6E31AE902DDD5720004C2466 /* SwiftUI.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		6E9C65AD2DD6C8E700A6A1A8 = {
 			isa = PBXGroup;
 			children = (
+				6E31AEA92DDD576B004C2466 /* keepsakeWidgetExtension.entitlements */,
 				6E9C65B82DD6C8E700A6A1A8 /* keepsake */,
+				6E31AE922DDD5720004C2466 /* keepsakeWidget */,
+				6E31AE8D2DDD5720004C2466 /* Frameworks */,
 				6E9C65B72DD6C8E700A6A1A8 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -54,6 +124,7 @@
 			isa = PBXGroup;
 			children = (
 				6E9C65B62DD6C8E700A6A1A8 /* keepsake.app */,
+				6E31AE8C2DDD5720004C2466 /* keepsakeWidgetExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -61,6 +132,28 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		6E31AE8B2DDD5720004C2466 /* keepsakeWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6E31AEA32DDD5722004C2466 /* Build configuration list for PBXNativeTarget "keepsakeWidgetExtension" */;
+			buildPhases = (
+				6E31AE882DDD5720004C2466 /* Sources */,
+				6E31AE892DDD5720004C2466 /* Frameworks */,
+				6E31AE8A2DDD5720004C2466 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				6E31AE922DDD5720004C2466 /* keepsakeWidget */,
+			);
+			name = keepsakeWidgetExtension;
+			packageProductDependencies = (
+			);
+			productName = keepsakeWidgetExtension;
+			productReference = 6E31AE8C2DDD5720004C2466 /* keepsakeWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		6E9C65B52DD6C8E700A6A1A8 /* keepsake */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 6E9C65C42DD6C8E800A6A1A8 /* Build configuration list for PBXNativeTarget "keepsake" */;
@@ -68,10 +161,12 @@
 				6E9C65B22DD6C8E700A6A1A8 /* Sources */,
 				6E9C65B32DD6C8E700A6A1A8 /* Frameworks */,
 				6E9C65B42DD6C8E700A6A1A8 /* Resources */,
+				6E31AEA72DDD5722004C2466 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				6E31AEA12DDD5722004C2466 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				6E9C65B82DD6C8E700A6A1A8 /* keepsake */,
@@ -93,6 +188,9 @@
 				LastSwiftUpdateCheck = 1620;
 				LastUpgradeCheck = 1620;
 				TargetAttributes = {
+					6E31AE8B2DDD5720004C2466 = {
+						CreatedOnToolsVersion = 16.2;
+					};
 					6E9C65B52DD6C8E700A6A1A8 = {
 						CreatedOnToolsVersion = 16.2;
 					};
@@ -113,11 +211,19 @@
 			projectRoot = "";
 			targets = (
 				6E9C65B52DD6C8E700A6A1A8 /* keepsake */,
+				6E31AE8B2DDD5720004C2466 /* keepsakeWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		6E31AE8A2DDD5720004C2466 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		6E9C65B42DD6C8E700A6A1A8 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -128,6 +234,13 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		6E31AE882DDD5720004C2466 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		6E9C65B22DD6C8E700A6A1A8 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -137,7 +250,71 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		6E31AEA12DDD5722004C2466 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6E31AE8B2DDD5720004C2466 /* keepsakeWidgetExtension */;
+			targetProxy = 6E31AEA02DDD5722004C2466 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		6E31AEA42DDD5722004C2466 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = keepsakeWidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 68D4P32AKJ;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = keepsakeWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = keepsakeWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.brat.keepsake.keepsakeWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		6E31AEA52DDD5722004C2466 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = keepsakeWidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 68D4P32AKJ;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = keepsakeWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = keepsakeWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.brat.keepsake.keepsakeWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		6E9C65C22DD6C8E800A6A1A8 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -262,6 +439,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = keepsake/keepsake.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"keepsake/Preview Content\"";
@@ -281,7 +459,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = me.hangralim.ryan.keepsake;
+				PRODUCT_BUNDLE_IDENTIFIER = com.brat.keepsake;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -294,6 +472,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = keepsake/keepsake.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"keepsake/Preview Content\"";
@@ -313,7 +492,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = me.hangralim.ryan.keepsake;
+				PRODUCT_BUNDLE_IDENTIFIER = com.brat.keepsake;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -324,6 +503,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		6E31AEA32DDD5722004C2466 /* Build configuration list for PBXNativeTarget "keepsakeWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6E31AEA42DDD5722004C2466 /* Debug */,
+				6E31AEA52DDD5722004C2466 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		6E9C65B12DD6C8E700A6A1A8 /* Build configuration list for PBXProject "keepsake" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
