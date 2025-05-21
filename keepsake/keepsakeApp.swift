@@ -12,8 +12,24 @@ struct keepsakeApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+				.onOpenURL { url in
+					handleDeepLink(url)
+				}
         }
     }
+	
+	private func handleDeepLink(_ url: URL) {
+		guard url.scheme == "keepsake",
+			  url.host == "select-folder",
+			  let components = URLComponents(url: url, resolvingAgainstBaseURL: true),
+			  let folderQuery = components.queryItems?.first(where: { $0.name == "folder" })?.value
+		else {
+			print("Invalid deep link: \(url)")
+			return
+		}
+		
+		UserDefaults(suiteName: "group.com.brat.keepsake")?.set(folderQuery, forKey: "selectedFolder")
+	}
 }
 
 fileprivate extension UINavigationBar {

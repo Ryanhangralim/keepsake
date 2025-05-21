@@ -6,8 +6,42 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		FAC1540A2DDABF8A001C948E /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC154092DDABF8A001C948E /* WidgetKit.framework */; };
+		FAC1540C2DDABF8B001C948E /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC1540B2DDABF8A001C948E /* SwiftUI.framework */; };
+		FAC154192DDABF8B001C948E /* keepsakeWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = FAC154072DDABF8A001C948E /* keepsakeWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		FAC154172DDABF8B001C948E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E9C65AE2DD6C8E700A6A1A8 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = FAC154062DDABF8A001C948E;
+			remoteInfo = keepsakeWidgetExtension;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		FAC1541E2DDABF8B001C948E /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				FAC154192DDABF8B001C948E /* keepsakeWidgetExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		6E9C65B62DD6C8E700A6A1A8 /* keepsake.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = keepsake.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		FAC154072DDABF8A001C948E /* keepsakeWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = keepsakeWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		FAC154092DDABF8A001C948E /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		FAC1540B2DDABF8A001C948E /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		FAC1542B2DDAC035001C948E /* keepsakeWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = keepsakeWidgetExtension.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -17,6 +51,13 @@
 				Info.plist,
 			);
 			target = 6E9C65B52DD6C8E700A6A1A8 /* keepsake */;
+		};
+		FAC1541D2DDABF8B001C948E /* Exceptions for "keepsakeWidget" folder in "keepsakeWidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = FAC154062DDABF8A001C948E /* keepsakeWidgetExtension */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
@@ -29,6 +70,14 @@
 			path = keepsake;
 			sourceTree = "<group>";
 		};
+		FAC1540D2DDABF8B001C948E /* keepsakeWidget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				FAC1541D2DDABF8B001C948E /* Exceptions for "keepsakeWidget" folder in "keepsakeWidgetExtension" target */,
+			);
+			path = keepsakeWidget;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -39,13 +88,25 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		FAC154042DDABF8A001C948E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FAC1540C2DDABF8B001C948E /* SwiftUI.framework in Frameworks */,
+				FAC1540A2DDABF8A001C948E /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		6E9C65AD2DD6C8E700A6A1A8 = {
 			isa = PBXGroup;
 			children = (
+				FAC1542B2DDAC035001C948E /* keepsakeWidgetExtension.entitlements */,
 				6E9C65B82DD6C8E700A6A1A8 /* keepsake */,
+				FAC1540D2DDABF8B001C948E /* keepsakeWidget */,
+				FAC154082DDABF8A001C948E /* Frameworks */,
 				6E9C65B72DD6C8E700A6A1A8 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -54,8 +115,18 @@
 			isa = PBXGroup;
 			children = (
 				6E9C65B62DD6C8E700A6A1A8 /* keepsake.app */,
+				FAC154072DDABF8A001C948E /* keepsakeWidgetExtension.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		FAC154082DDABF8A001C948E /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				FAC154092DDABF8A001C948E /* WidgetKit.framework */,
+				FAC1540B2DDABF8A001C948E /* SwiftUI.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -68,10 +139,12 @@
 				6E9C65B22DD6C8E700A6A1A8 /* Sources */,
 				6E9C65B32DD6C8E700A6A1A8 /* Frameworks */,
 				6E9C65B42DD6C8E700A6A1A8 /* Resources */,
+				FAC1541E2DDABF8B001C948E /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				FAC154182DDABF8B001C948E /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				6E9C65B82DD6C8E700A6A1A8 /* keepsake */,
@@ -82,6 +155,28 @@
 			productName = keepsake;
 			productReference = 6E9C65B62DD6C8E700A6A1A8 /* keepsake.app */;
 			productType = "com.apple.product-type.application";
+		};
+		FAC154062DDABF8A001C948E /* keepsakeWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FAC1541A2DDABF8B001C948E /* Build configuration list for PBXNativeTarget "keepsakeWidgetExtension" */;
+			buildPhases = (
+				FAC154032DDABF8A001C948E /* Sources */,
+				FAC154042DDABF8A001C948E /* Frameworks */,
+				FAC154052DDABF8A001C948E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				FAC1540D2DDABF8B001C948E /* keepsakeWidget */,
+			);
+			name = keepsakeWidgetExtension;
+			packageProductDependencies = (
+			);
+			productName = keepsakeWidgetExtension;
+			productReference = FAC154072DDABF8A001C948E /* keepsakeWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -94,6 +189,9 @@
 				LastUpgradeCheck = 1620;
 				TargetAttributes = {
 					6E9C65B52DD6C8E700A6A1A8 = {
+						CreatedOnToolsVersion = 16.2;
+					};
+					FAC154062DDABF8A001C948E = {
 						CreatedOnToolsVersion = 16.2;
 					};
 				};
@@ -113,12 +211,20 @@
 			projectRoot = "";
 			targets = (
 				6E9C65B52DD6C8E700A6A1A8 /* keepsake */,
+				FAC154062DDABF8A001C948E /* keepsakeWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		6E9C65B42DD6C8E700A6A1A8 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FAC154052DDABF8A001C948E /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -135,7 +241,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		FAC154032DDABF8A001C948E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		FAC154182DDABF8B001C948E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = FAC154062DDABF8A001C948E /* keepsakeWidgetExtension */;
+			targetProxy = FAC154172DDABF8B001C948E /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		6E9C65C22DD6C8E800A6A1A8 /* Debug */ = {
@@ -262,10 +383,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = keepsake/keepsake.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"keepsake/Preview Content\"";
-				DEVELOPMENT_TEAM = 68D4P32AKJ;
+				DEVELOPMENT_TEAM = 9ASBJ87RVR;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = keepsake/Info.plist;
@@ -282,7 +404,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = me.hangralim.ryan.keepsake;
+				PRODUCT_BUNDLE_IDENTIFIER = com.brat.keepsakeee;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -295,10 +417,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = keepsake/keepsake.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"keepsake/Preview Content\"";
-				DEVELOPMENT_TEAM = 68D4P32AKJ;
+				DEVELOPMENT_TEAM = 9ASBJ87RVR;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = keepsake/Info.plist;
@@ -315,8 +438,64 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = me.hangralim.ryan.keepsake;
+				PRODUCT_BUNDLE_IDENTIFIER = com.brat.keepsakeee;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		FAC1541B2DDABF8B001C948E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = keepsakeWidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9ASBJ87RVR;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = keepsakeWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = keepsakeWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.brat.keepsakeee.keepsakeWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		FAC1541C2DDABF8B001C948E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = keepsakeWidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9ASBJ87RVR;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = keepsakeWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = keepsakeWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.brat.keepsakeee.keepsakeWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -340,6 +519,15 @@
 			buildConfigurations = (
 				6E9C65C52DD6C8E800A6A1A8 /* Debug */,
 				6E9C65C62DD6C8E800A6A1A8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		FAC1541A2DDABF8B001C948E /* Build configuration list for PBXNativeTarget "keepsakeWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FAC1541B2DDABF8B001C948E /* Debug */,
+				FAC1541C2DDABF8B001C948E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

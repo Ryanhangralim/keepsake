@@ -22,7 +22,7 @@ class PhotoCollection: NSObject, ObservableObject {
     
     let cache = CachedImageManager()
     
-    private var assetCollection: PHAssetCollection?
+    var assetCollection: PHAssetCollection?
     
     private var createAlbumIfNotFound = false
     
