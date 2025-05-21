@@ -21,8 +21,10 @@ struct ContentView: View {
                 LazyVGrid(columns: columns, spacing: 15) {
                     ForEach(albumManager.albums, id: \.localIdentifier) { album in
                         NavigationLink(destination: CameraView(model: DataModel(album: album), albumManager: albumManager)) {
-                            AlbumCardView(title: album.localizedTitle?.replacingOccurrences(of: "🌅 ", with: "") ?? "Unnamed")
-//                                .frame(height: 200)
+                            AlbumCardView(
+                                title: album.localizedTitle?.replacingOccurrences(of: "🌅 ", with: "") ?? "Unnamed",
+                                metadata: albumManager.loadAlbumMetadata(for: album.localIdentifier)
+                            )
                         }
                     }
                 }

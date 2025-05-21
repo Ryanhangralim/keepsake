@@ -8,6 +8,7 @@
 import Foundation
 import Photos
 import PhotosUI
+import SwiftUICore
 
 class AlbumManager: ObservableObject {
     @Published var albums: [PHAssetCollection] = []
@@ -43,7 +44,7 @@ class AlbumManager: ObservableObject {
         }
     }
     
-    func createAlbum(named name: String) {
+    func createAlbum(named name: String, completion: @escaping (PHAssetCollection?) -> Void) {
         let fullName = albumPrefix + name
 
         // Check if album already exists
@@ -51,24 +52,32 @@ class AlbumManager: ObservableObject {
         fetchOptions.predicate = NSPredicate(format: "title = %@", fullName)
         let existing = PHAssetCollection.fetchAssetCollections(with: .album, subtype: .albumRegular, options: fetchOptions)
 
-        if existing.firstObject != nil {
+        if let existingAlbum = existing.firstObject {
             print("Album already exists.")
+            completion(existingAlbum) // Pass back the existing album
             return
         }
 
+        var placeholder: PHObjectPlaceholder?
+
         PHPhotoLibrary.shared().performChanges({
-            _ = PHAssetCollectionChangeRequest.creationRequestForAssetCollection(withTitle: fullName)
+            let request = PHAssetCollectionChangeRequest.creationRequestForAssetCollection(withTitle: fullName)
+            placeholder = request.placeholderForCreatedAssetCollection
         }) { success, error in
-            if success {
-                DispatchQueue.main.async {
-                    self.loadAlbums()
-                }
+            DispatchQueue.main.async {
+                self.loadAlbums()
+            }
+
+            if success, let placeholder = placeholder {
+                let fetchResult = PHAssetCollection.fetchAssetCollections(withLocalIdentifiers: [placeholder.localIdentifier], options: nil)
+                completion(fetchResult.firstObject)
             } else {
                 print("Error creating album: \(error?.localizedDescription ?? "unknown")")
+                completion(nil)
             }
         }
     }
-    
+
     func saveImage(_ image: UIImage, to album: PHAssetCollection) {
         PHPhotoLibrary.shared().performChanges({
             let request = PHAssetChangeRequest.creationRequestForAsset(from: image)
@@ -84,5 +93,33 @@ class AlbumManager: ObservableObject {
                 print("Error saving image to album: \(error?.localizedDescription ?? "unknown error")")
             }
         })
+    }
+    
+    // Save album metadata to UserDefaults
+    func saveAlbumMetadata(albumId: String, emoji: String, color: Color) {
+        // Convert Color to hex string
+        let hexColor = color.toHex()
+        
+        // Get current metadata or create new
+        if var albumsMetadata = UserDefaults.standard.dictionary(forKey: "AlbumsMetadata") as? [String: [String: String]] {
+            albumsMetadata[albumId] = ["emoji": emoji, "colorHex": hexColor]
+            UserDefaults.standard.set(albumsMetadata, forKey: "AlbumsMetadata")
+        } else {
+            let albumsMetadata = [albumId: ["emoji": emoji, "colorHex": hexColor]]
+            UserDefaults.standard.set(albumsMetadata, forKey: "AlbumsMetadata")
+        }
+    }
+
+    
+    // Load album metadata from UserDefaults
+    func loadAlbumMetadata(for albumId: String) -> AlbumMetadata {
+        guard let albumsMetadata = UserDefaults.standard.dictionary(forKey: "AlbumsMetadata") as? [String: [String: String]],
+              let metadata = albumsMetadata[albumId],
+              let emoji = metadata["emoji"],
+              let colorHex = metadata["colorHex"] else {
+            return AlbumMetadata.defaultMetadata
+        }
+        
+        return AlbumMetadata(emoji: emoji, colorHex: colorHex)
     }
 }

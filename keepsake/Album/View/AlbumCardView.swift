@@ -10,24 +10,38 @@ import SwiftUI
 struct AlbumCardView: View {
     let title: String
     let gradient: LinearGradient
+    let metadata: AlbumMetadata
 
-    init(title: String) {
+    init(title: String, metadata: AlbumMetadata) {
         self.title = title
         self.gradient = AlbumCardView.randomGradient()
+        self.metadata = metadata
     }
 
     var body: some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: 20)
-                .fill(gradient)
-                .frame(width: 165, height: 165)
+        VStack {
+            ZStack {
+                Color(hex: metadata.colorHex)
+                    .aspectRatio(1.0, contentMode: .fill)
 
-            Text(title)
-                .font(.title3)
-                .fontWeight(.semibold)
-                .foregroundColor(.white)
+                VStack(spacing: 8) {
+                    Text(metadata.emoji)
+                        .font(.system(size: 48))
+
+                    Text(title)
+                        .font(.title3)
+                        .foregroundColor(.primary)
+                        .multilineTextAlignment(.center)
+                        .lineLimit(2)
+                        .padding(.horizontal, 8)
+                }
+            }
+            .frame(width: 165, height: 165)
+            .clipShape(RoundedRectangle(cornerRadius: 15, style: .continuous))
+            .background(Color(.systemBackground))
+            .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 2)
+            }
         }
-    }
 
     static func randomGradient() -> LinearGradient {
         let gradients: [LinearGradient] = [
@@ -49,7 +63,35 @@ struct AlbumCardView: View {
     }
 }
 
+extension Color {
+    init(hex: String) {
+        let scanner = Scanner(string: hex)
+        _ = scanner.scanString("#")
+
+        var rgb: UInt64 = 0
+        scanner.scanHexInt64(&rgb)
+
+        let r = Double((rgb >> 16) & 0xFF) / 255
+        let g = Double((rgb >> 8) & 0xFF) / 255
+        let b = Double(rgb & 0xFF) / 255
+
+        self.init(red: r, green: g, blue: b)
+    }
+    
+    // Add a method to convert Color to hex string
+    func toHex() -> String {
+        guard let components = UIColor(self).cgColor.components else {
+            return "#000000"
+        }
+        
+        let r = Int(components[0] * 255.0)
+        let g = Int(components[1] * 255.0)
+        let b = Int(components[2] * 255.0)
+        
+        return String(format: "#%02X%02X%02X", r, g, b)
+    }
+}
 
 #Preview {
-    AlbumCardView(title: "Brat")
+    AlbumCardView(title: "Vacation 2024", metadata: AlbumMetadata(emoji: "🌴", colorHex: "#3A86FF"))
 }

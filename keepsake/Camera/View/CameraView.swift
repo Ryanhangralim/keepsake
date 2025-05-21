@@ -21,14 +21,14 @@ struct CameraView: View {
                 ViewfinderView(image: $model.viewfinderImage)
                     .id(model.selectedAlbumID) // forces the view to reload
                     .overlay(alignment: .top) {
-                        Color.black
-                            .opacity(0.50)
+                        Color.clear
+//                            .opacity(0.50)
                             .frame(height: geometry.size.height * Self.barHeightFactor)
                     }
                     .overlay(alignment: .bottom) {
                         buttonsView()
                             .frame(height: geometry.size.height * Self.barHeightFactor)
-                            .background(.black.opacity(0.50))
+//                            .background(.black.opacity(0.50))
                     }
                     .overlay(alignment: .center)  {
                         Color.clear
@@ -49,11 +49,14 @@ struct CameraView: View {
                     albumMenu()
                 }
             }
-            .navigationTitle(model.photoCollection.albumName ?? "Camera")
+            .navigationTitle(model.photoCollection.albumName?.replacingOccurrences(of: "🌅 ", with: "") ?? "Camera")
             .navigationBarTitleDisplayMode(.inline)
+            .toolbarColorScheme(.dark, for: .navigationBar) // Force dark mode for navigation bar
+            .toolbarBackground(.black, for: .navigationBar) // Set navigation bar background to black
+            .toolbarBackground(.visible, for: .navigationBar) // Make sure background is visible
+            .foregroundColor(.white) // Set the default text color to white
             .ignoresSafeArea()
             .statusBar(hidden: true)
-
         }
     }
     
@@ -123,7 +126,7 @@ struct CameraView: View {
                         await model.loadThumbnail()
                     }
                 }) {
-                    Text(album.localizedTitle ?? "Unnamed")
+                    Text(album.localizedTitle?.replacingOccurrences(of: "🌅 ", with: "") ?? "Unnamed")
                 }
             }
         } label: {
@@ -132,6 +135,7 @@ struct CameraView: View {
         }
     }
 }
+
 
 //#Preview {
 //    CameraView()
