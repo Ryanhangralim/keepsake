@@ -9,18 +9,27 @@ import SwiftUI
 import Photos
 
 struct ContentView: View {
+    static let sharedDefaults = UserDefaults(suiteName: "group.com.keepsake")
+    @Environment(\.scenePhase) var scenePhase
     @StateObject private var albumManager = AlbumManager()
+    @StateObject private var navigationManager = NavigationManager.shared
+    @State private var selectedFolderIdentifier: String?
+    
+    init() {
+        _selectedFolderIdentifier = State(initialValue: Self.sharedDefaults?.string(forKey: "selectedFolder"))
+    }
+    
     private let columns = [
         GridItem(.flexible()),
         GridItem(.flexible())
     ]
 
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $navigationManager.path) {
             ScrollView {
                 LazyVGrid(columns: columns, spacing: 15) {
                     ForEach(albumManager.albums, id: \.localIdentifier) { album in
-                        NavigationLink(destination: CameraView(model: DataModel(album: album), albumManager: albumManager)) {
+                        NavigationLink(value: album) {
                             AlbumCardView(
                                 title: album.localizedTitle?.replacingOccurrences(of: "🌅 ", with: "") ?? "Unnamed",
                                 metadata: albumManager.loadAlbumMetadata(for: album.localIdentifier)
@@ -32,9 +41,20 @@ struct ContentView: View {
                 .padding(.top, 10)
             }
             .navigationTitle("My Albums")
+            .navigationDestination(for: PHAssetCollection.self) { album in
+                CameraView(model: DataModel(album: album))
+            }
+            .navigationDestination(for: String.self) { destination in
+                if destination == "CreateAlbum" {
+                    CreateAlbumView(albumManager: albumManager)
+                }
+            }
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    NavigationLink(destination: CreateAlbumView(albumManager: albumManager)) {
+                    Button {
+                        navigationManager.path = NavigationPath()
+                        navigationManager.path.append("CreateAlbum")
+                    } label: {
                         Image(systemName: "plus")
                             .imageScale(.large)
                     }
@@ -47,6 +67,37 @@ struct ContentView: View {
                     }
                 }
             }
+            .onChange(of: scenePhase) { _, newState in
+                if newState == .active {
+                    loadFolders()
+                }
+            }
+            .onOpenURL { _ in
+                // Update selectedFolderIdentifier when a deep link is received
+                loadFolders()
+                if let album = getAlbum(identifier: selectedFolderIdentifier) {
+                    navigationManager.path = NavigationPath()
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                        navigationManager.path.append(album)
+                    }
+                }
+            }
         }
+        .environmentObject(navigationManager)
+    }
+    
+    private func loadFolders() {
+        selectedFolderIdentifier = Self.sharedDefaults?.string(forKey: "selectedFolder")
+    }
+    
+    private func getAlbum(identifier: String?) -> PHAssetCollection? {
+        guard let identifier = identifier else { return nil }
+        return PHAssetCollection.fetchAssetCollections(withLocalIdentifiers: [identifier], options: nil).firstObject
+    }
+    
+    private func getAlbumName(identifier: String?) -> String {
+        guard let identifier = identifier else { return "No Folder Selected" }
+        let userAlbums = PHAssetCollection.fetchAssetCollections(withLocalIdentifiers: [identifier], options: nil)
+        return userAlbums.firstObject?.localizedTitle ?? "No Folder Selected"
     }
 }

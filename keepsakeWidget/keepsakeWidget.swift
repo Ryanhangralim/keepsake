@@ -64,7 +64,7 @@ struct KipsekWidgetEntryView: View {
 
 struct KipsekWidget: Widget {
 	var body: some WidgetConfiguration {
-		AppIntentConfiguration(kind: "group.com.brat.keepsake", intent: ConfigurationAppIntent.self, provider: Provider()) { entry in
+		AppIntentConfiguration(kind: "group.com.keepsake", intent: ConfigurationAppIntent.self, provider: Provider()) { entry in
 			KipsekWidgetEntryView(entry: entry)
 		}
 		.configurationDisplayName("Kipsek")

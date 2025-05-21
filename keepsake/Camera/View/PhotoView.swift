@@ -11,6 +11,7 @@ import Photos
 struct PhotoView: View {
     var asset: PhotoAsset
     var cache: CachedImageManager?
+    @EnvironmentObject var navigationManager: NavigationManager
     @State private var image: Image?
     @State private var imageRequestID: PHImageRequestID?
     @Environment(\.dismiss) var dismiss
@@ -64,7 +65,7 @@ struct PhotoView: View {
                 Task {
                     await asset.delete()
                     await MainActor.run {
-                        dismiss()
+                        navigationManager.path.removeLast()
                     }
                 }
             } label: {

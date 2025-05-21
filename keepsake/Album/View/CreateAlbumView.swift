@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct CreateAlbumView: View {
+    @EnvironmentObject var navigationManager: NavigationManager
     @Environment(\.presentationMode) var presentationMode
     @ObservedObject var albumManager: AlbumManager
     @State private var albumName: String = ""
@@ -44,6 +45,7 @@ struct CreateAlbumView: View {
                             albumManager.saveAlbumMetadata(albumId: album.localIdentifier, emoji: selectedEmoji, color: selectedColor)
                         }
                     }
+                    navigationManager.path.removeLast()
                     presentationMode.wrappedValue.dismiss()
 
                 }

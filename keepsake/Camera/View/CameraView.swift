@@ -9,55 +9,69 @@ import SwiftUI
 
 struct CameraView: View {
     @StateObject var model: DataModel
+    @EnvironmentObject var navigationManager: NavigationManager
     @State private var isAlbumMenuVisible = false
-    @StateObject var albumManager: AlbumManager
+    @StateObject var albumManager = AlbumManager()
  
     private static let barHeightFactor = 0.15
     
     var body: some View {
-        
-        NavigationStack {
-            GeometryReader { geometry in
-                ViewfinderView(image: $model.viewfinderImage)
-                    .id(model.selectedAlbumID) // forces the view to reload
-                    .overlay(alignment: .top) {
-                        Color.clear
+        GeometryReader { geometry in
+            ViewfinderView(image: $model.viewfinderImage)
+                .id(model.selectedAlbumID) // forces the view to reload
+                .overlay(alignment: .top) {
+                    Color.clear
 //                            .opacity(0.50)
-                            .frame(height: geometry.size.height * Self.barHeightFactor)
-                    }
-                    .overlay(alignment: .bottom) {
-                        buttonsView()
-                            .frame(height: geometry.size.height * Self.barHeightFactor)
+                        .frame(height: geometry.size.height * Self.barHeightFactor)
+                }
+                .overlay(alignment: .bottom) {
+                    buttonsView()
+                        .frame(height: geometry.size.height * Self.barHeightFactor)
 //                            .background(.black.opacity(0.50))
-                    }
-                    .overlay(alignment: .center)  {
-                        Color.clear
-                            .frame(height: geometry.size.height * (1 - (Self.barHeightFactor * 2)))
-                            .accessibilityElement()
-                            .accessibilityLabel("View Finder")
-                            .accessibilityAddTraits([.isImage])
-                    }
-                    .background(.black)
-            }
-            .task {
+                }
+                .overlay(alignment: .center)  {
+                    Color.clear
+                        .frame(height: geometry.size.height * (1 - (Self.barHeightFactor * 2)))
+                        .accessibilityElement()
+                        .accessibilityLabel("View Finder")
+                        .accessibilityAddTraits([.isImage])
+                }
+                .background(.black)
+        }
+        .task {
+            await model.camera.start()
+            await model.loadPhotos()
+            await model.loadThumbnail()
+        }
+        .onAppear {
+            Task {
                 await model.camera.start()
                 await model.loadPhotos()
                 await model.loadThumbnail()
             }
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    albumMenu()
-                }
-            }
-            .navigationTitle(model.photoCollection.albumName?.replacingOccurrences(of: "🌅 ", with: "") ?? "Camera")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbarColorScheme(.dark, for: .navigationBar) // Force dark mode for navigation bar
-            .toolbarBackground(.black, for: .navigationBar) // Set navigation bar background to black
-            .toolbarBackground(.visible, for: .navigationBar) // Make sure background is visible
-            .foregroundColor(.white) // Set the default text color to white
-            .ignoresSafeArea()
-            .statusBar(hidden: true)
         }
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                albumMenu()
+            }
+        }
+        .navigationTitle(model.photoCollection.albumName?.replacingOccurrences(of: "🌅 ", with: "") ?? "Camera")
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationDestination(for: PhotoCollection.self) { photoCollection in
+            PhotoCollectionView(photoCollection: photoCollection)
+                .onAppear {
+                    model.camera.isPreviewPaused = true
+                }
+                .onDisappear {
+                    model.camera.isPreviewPaused = false
+                }
+        }
+        .toolbarColorScheme(.dark, for: .navigationBar) // Force dark mode for navigation bar
+        .toolbarBackground(.black, for: .navigationBar) // Set navigation bar background to black
+        .toolbarBackground(.visible, for: .navigationBar) // Make sure background is visible
+        .foregroundColor(.white) // Set the default text color to white
+        .ignoresSafeArea()
+        .statusBar(hidden: true)
     }
     
     private func buttonsView() -> some View {
@@ -65,15 +79,9 @@ struct CameraView: View {
             
             Spacer()
             
-            NavigationLink {
-                PhotoCollectionView(photoCollection: model.photoCollection)
-                    .onAppear {
-                        model.camera.isPreviewPaused = true
-                    }
-                    .onDisappear {
-                        model.camera.isPreviewPaused = false
-                    }
-            } label: {
+            Button(action: {
+                navigationManager.path.append(model.photoCollection)
+            }) {
                 Label {
                     Text("Gallery")
                 } icon: {

@@ -10,7 +10,7 @@ import os.log
 
 struct PhotoCollectionView: View {
     @ObservedObject var photoCollection : PhotoCollection
-    
+    @EnvironmentObject var navigationManager: NavigationManager
     @Environment(\.displayScale) private var displayScale
         
     private static let itemSpacing = 12.0
@@ -29,19 +29,21 @@ struct PhotoCollectionView: View {
         ScrollView {
             LazyVGrid(columns: columns, spacing: Self.itemSpacing) {
                 ForEach(photoCollection.photoAssets) { asset in
-                    NavigationLink {
-                        PhotoView(asset: asset, cache: photoCollection.cache)
-                    } label: {
+                    Button(action: {
+                        navigationManager.path.append(asset)
+                    }) {
                         photoItemView(asset: asset)
                     }
                     .buttonStyle(.borderless)
-                    .accessibilityLabel(asset.accessibilityLabel)
-                }
+                    .accessibilityLabel(asset.accessibilityLabel)                }
             }
             .padding([.vertical], Self.itemSpacing)
         }
         .navigationTitle(photoCollection.albumName ?? "Gallery")
         .navigationBarTitleDisplayMode(.inline)
+        .navigationDestination(for: PhotoAsset.self) { asset in
+            PhotoView(asset: asset, cache: photoCollection.cache)
+        }
         .statusBar(hidden: false)
     }
     
