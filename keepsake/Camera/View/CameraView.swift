@@ -55,7 +55,7 @@ struct CameraView: View {
                 albumMenu()
             }
         }
-        .navigationTitle(model.photoCollection.albumName?.replacingOccurrences(of: "🌅 ", with: "") ?? "Camera")
+        .navigationTitle(model.photoCollection.albumName?.replacingOccurrences(of: "🌅 ", with: "\(albumManager.loadAlbumMetadata(for: model.photoCollection.assetCollection?.localIdentifier ?? "📷 ").emoji) ") ?? "Camera")
         .navigationBarTitleDisplayMode(.inline)
         .navigationDestination(for: PhotoCollection.self) { photoCollection in
             PhotoCollectionView(photoCollection: photoCollection)
@@ -134,7 +134,7 @@ struct CameraView: View {
                         await model.loadThumbnail()
                     }
                 }) {
-                    Text(album.localizedTitle?.replacingOccurrences(of: "🌅 ", with: "") ?? "Unnamed")
+                    Text(album.localizedTitle?.replacingOccurrences(of: "🌅 ", with: "\(albumManager.loadAlbumMetadata(for: album.localIdentifier).emoji) ") ?? "Unnamed")
                 }
             }
         } label: {
