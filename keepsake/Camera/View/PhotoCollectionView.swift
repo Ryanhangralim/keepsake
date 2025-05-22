@@ -39,7 +39,7 @@ struct PhotoCollectionView: View {
             }
             .padding([.vertical], Self.itemSpacing)
         }
-        .navigationTitle(photoCollection.albumName ?? "Gallery")
+        .navigationTitle(photoCollection.albumName?.replacingOccurrences(of: "🌅 ", with: "") ?? "Gallery")
         .navigationBarTitleDisplayMode(.inline)
         .navigationDestination(for: PhotoAsset.self) { asset in
             PhotoView(asset: asset, cache: photoCollection.cache)
