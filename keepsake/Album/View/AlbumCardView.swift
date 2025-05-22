@@ -30,7 +30,7 @@ struct AlbumCardView: View {
 
                     Text(title)
                         .font(.title3)
-                        .foregroundColor(.primary)
+                        .foregroundColor(.white)
                         .multilineTextAlignment(.center)
                         .lineLimit(2)
                         .padding(.horizontal, 8)
@@ -93,5 +93,5 @@ extension Color {
 }
 
 #Preview {
-    AlbumCardView(title: "Vacation 2024", metadata: AlbumMetadata(emoji: "🌴", colorHex: "#3A86FF"))
+    AlbumCardView(title: "Vacation 2024", metadata: AlbumMetadata(emoji: "🌴", colorHex: "#FF5F6D"))
 }
