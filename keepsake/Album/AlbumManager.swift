@@ -98,10 +98,7 @@ class AlbumManager: ObservableObject {
 	}
 	
 	// Save album metadata to shared UserDefaults
-	func saveAlbumMetadata(albumId: String, emoji: String, color: Color) {
-		// Convert Color to hex string
-		let hexColor = color.toHex()
-		
+	func saveAlbumMetadata(albumId: String, emoji: String, hexColor: String) {		
 		// Get current metadata or create new
 		if var albumsMetadata = sharedDefaults?.dictionary(forKey: "AlbumsMetadata") as? [String: [String: String]] {
 			albumsMetadata[albumId] = ["emoji": emoji, "colorHex": hexColor]
