@@ -9,7 +9,7 @@ import SwiftUI
 import Photos
 
 struct ContentView: View {
-    static let sharedDefaults = UserDefaults(suiteName: "group.com.keepsake")
+    static let sharedDefaults = UserDefaults(suiteName: "group.com.keepsakeu")
     @Environment(\.scenePhase) var scenePhase
     @StateObject private var albumManager = AlbumManager()
     @StateObject private var navigationManager = NavigationManager.shared
@@ -72,12 +72,21 @@ struct ContentView: View {
                     loadFolders()
                 }
             }
-            .onOpenURL { _ in
-                // Update selectedFolderIdentifier when a deep link is received
+            .onOpenURL { url in
                 loadFolders()
-                if let album = getAlbum(identifier: selectedFolderIdentifier) {
+				
+				guard url.scheme == "keepsake",
+					  url.host == "select-folder",
+					  let components = URLComponents(url: url, resolvingAgainstBaseURL: true),
+					  let folderQuery = components.queryItems?.first(where: { $0.name == "folder" })?.value
+				else {
+					print("Invalid deep link: \(url)")
+					return
+				}
+				
+				if let album = getAlbum(identifier: folderQuery) {
                     navigationManager.path = NavigationPath()
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+					DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                         navigationManager.path.append(album)
                     }
                 }

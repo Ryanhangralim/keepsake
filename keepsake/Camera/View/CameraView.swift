@@ -52,7 +52,14 @@ struct CameraView: View {
         }
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                albumMenu()
+				HStack {
+					albumMenu()
+					Button {
+						model.camera.useFlash.toggle()
+					} label: {
+						Image(systemName: model.camera.useFlash ? "bolt.fill" : "bolt.slash.fill")
+					}
+				}
             }
         }
         .navigationTitle(model.photoCollection.albumName?.replacingOccurrences(of: "🌅 ", with: "\(albumManager.loadAlbumMetadata(for: model.photoCollection.assetCollection?.localIdentifier ?? "📷 ").emoji) ") ?? "Camera")
