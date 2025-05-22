@@ -97,7 +97,7 @@ struct KipsekWidgetEntryView: View {
 					Text(entry.emoji)
 						.font(.system(size: 36))
 					
-					Text(album.title.replacingOccurrences(of: "🌅 ", with: ""))
+					Text(String(album.title.dropFirst()))
 						.font(.headline)
 						.foregroundColor(.primary)
 				}

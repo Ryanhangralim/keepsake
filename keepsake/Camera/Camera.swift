@@ -258,6 +258,30 @@ class Camera: NSObject {
             }
         }
     }
+	
+	func setZoomFactor(_ factor: CGFloat, animated: Bool = true, rate: Float = 2.0) {
+		guard let device = captureDevice else { return }
+		let clampedZoomFactor = max(1.0, min(factor, device.activeFormat.videoMaxZoomFactor))
+		
+		sessionQueue.async {
+			do {
+				try device.lockForConfiguration()
+				
+				if animated && abs(device.videoZoomFactor - clampedZoomFactor) > 0.01 {
+					// Use smooth ramping for zoom changes
+					device.ramp(toVideoZoomFactor: clampedZoomFactor, withRate: rate)
+				} else {
+					// Immediate zoom change
+					device.videoZoomFactor = clampedZoomFactor
+				}
+				
+				device.unlockForConfiguration()
+			} catch {
+				logger.error("Failed to set zoom factor: \(error.localizedDescription)")
+			}
+		}
+	}
+
     
     func stop() {
         guard isCaptureSessionConfigured else { return }
@@ -277,10 +301,6 @@ class Camera: NSObject {
             self.captureDevice = AVCaptureDevice.default(for: .video)
         }
     }
-	
-	func zoomIn() {
-		
-	}
 
     private var deviceOrientation: UIDeviceOrientation {
         var orientation = UIDevice.current.orientation

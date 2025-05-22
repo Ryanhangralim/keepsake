@@ -12,6 +12,8 @@ struct CameraView: View {
     @EnvironmentObject var navigationManager: NavigationManager
     @State private var isAlbumMenuVisible = false
     @StateObject var albumManager = AlbumManager()
+	@State private var currentZoom = 0.0
+	@State private var totalZoom = 1.0
  
     private static let barHeightFactor = 0.15
     
@@ -37,6 +39,24 @@ struct CameraView: View {
                         .accessibilityAddTraits([.isImage])
                 }
                 .background(.black)
+				.gesture(
+					MagnifyGesture()
+						.onChanged { value in
+							currentZoom = value.magnification - 1
+							model.camera.setZoomFactor(currentZoom)
+						}
+						.onEnded { value in
+							totalZoom += currentZoom
+							currentZoom = totalZoom
+						}
+				)
+				.accessibilityZoomAction { action in
+					if action.direction == .zoomIn {
+						totalZoom += 1
+					} else {
+						totalZoom -= 1
+					}
+				}
         }
         .task {
             await model.camera.start()
@@ -58,6 +78,16 @@ struct CameraView: View {
 						model.camera.useFlash.toggle()
 					} label: {
 						Image(systemName: model.camera.useFlash ? "bolt.fill" : "bolt.slash.fill")
+					}
+					Button {
+						model.camera.setZoomFactor(5)
+					} label: {
+						Text("x5")
+					}
+					Button {
+						model.camera.setZoomFactor(1)
+					} label: {
+						Text("x1")
 					}
 				}
             }
@@ -84,8 +114,8 @@ struct CameraView: View {
     private func buttonsView() -> some View {
         HStack(spacing: 60) {
             
-            Spacer()
-            
+			Spacer()
+			
             Button(action: {
                 navigationManager.path.append(model.photoCollection)
             }) {

@@ -1,4 +1,5 @@
 //
+//
 //  AppIntent.swift
 //  keepsakeWidget
 //
@@ -23,11 +24,15 @@ struct AlbumEntity: AppEntity, Equatable, Hashable {
 }
 
 struct AlbumQuery: EntityQuery {
+	// Use shared UserDefaults to access album metadata
+	private let sharedDefaults = UserDefaults(suiteName: "group.com.keepsakeu")
+	
 	func entities(for identifiers: [String]) async throws -> [AlbumEntity] {
 		identifiers.compactMap { id in
 			if let collection = PHAssetCollection.fetchAssetCollections(withLocalIdentifiers: [id], options: nil).firstObject,
 			   let title = collection.localizedTitle {
-				return AlbumEntity(id: id, title: title)
+				let displayTitle = getDisplayTitle(for: title, albumId: id)
+				return AlbumEntity(id: id, title: displayTitle)
 			}
 			return nil
 		}
@@ -39,14 +44,39 @@ struct AlbumQuery: EntityQuery {
 		let albums = PHAssetCollection.fetchAssetCollections(with: .album, subtype: .albumRegular, options: nil)
 		albums.enumerateObjects { collection, _, _ in
 			if let title = collection.localizedTitle, title.hasPrefix("🌅") {
-				results.append(AlbumEntity(id: collection.localIdentifier, title: title))
+				let displayTitle = getDisplayTitle(for: title, albumId: collection.localIdentifier)
+				results.append(AlbumEntity(id: collection.localIdentifier, title: displayTitle))
 			}
 		}
 		
 		return results
 	}
+	
+	// Helper function to get display title with emoji
+	private func getDisplayTitle(for originalTitle: String, albumId: String) -> String {
+		let albumMetadata = loadAlbumMetadata(for: albumId)
+		return originalTitle.replacingOccurrences(of: "🌅 ", with: "\(albumMetadata.emoji) ")
+	}
+	
+	// Load album metadata from shared UserDefaults (same as AlbumManager)
+	private func loadAlbumMetadata(for albumId: String) -> AlbumMetadata {
+		guard let albumsMetadata = sharedDefaults?.dictionary(forKey: "AlbumsMetadata") as? [String: [String: String]],
+			  let metadata = albumsMetadata[albumId],
+			  let emoji = metadata["emoji"] else {
+			return AlbumMetadata.defaultMetadata
+		}
+		
+		return AlbumMetadata(emoji: emoji, colorHex: metadata["colorHex"] ?? "#CCCCCC")
+	}
 }
 
+// Add AlbumMetadata struct to match the one in your main app
+private struct AlbumMetadata {
+	let emoji: String
+	let colorHex: String
+	
+	static let defaultMetadata = AlbumMetadata(emoji: "📷", colorHex: "#CCCCCC")
+}
 
 struct ConfigurationAppIntent: WidgetConfigurationIntent {
 	static var title: LocalizedStringResource { "Configuration" }
