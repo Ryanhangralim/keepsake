@@ -28,7 +28,7 @@ struct keepsakeApp: App {
             return
         }
         
-        UserDefaults(suiteName: "group.com.keepsakeu")?.set(folderQuery, forKey: "selectedFolder")
+        UserDefaults(suiteName: "group.com.brats.keepsake")?.set(folderQuery, forKey: "selectedFolder")
     }
 }
 

@@ -9,7 +9,7 @@ import SwiftUI
 import Photos
 
 struct ContentView: View {
-    static let sharedDefaults = UserDefaults(suiteName: "group.com.keepsakeu")
+    static let sharedDefaults = UserDefaults(suiteName: "group.com.brats.keepsake")
     @Environment(\.scenePhase) var scenePhase
     @StateObject private var albumManager = AlbumManager()
     @StateObject private var navigationManager = NavigationManager.shared
