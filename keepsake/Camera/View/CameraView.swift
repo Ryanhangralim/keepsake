@@ -12,9 +12,9 @@ struct CameraView: View {
     @EnvironmentObject var navigationManager: NavigationManager
     @State private var isAlbumMenuVisible = false
     @StateObject var albumManager = AlbumManager()
-	@State private var currentZoom = 0.0
-	@State private var totalZoom = 1.0
- 
+	@State private var totalZoom: CGFloat = 1.0
+	@State private var gestureZoom: CGFloat = 1.0
+	
     private static let barHeightFactor = 0.15
     
     var body: some View {
@@ -23,13 +23,7 @@ struct CameraView: View {
                 .id(model.selectedAlbumID) // forces the view to reload
                 .overlay(alignment: .top) {
                     Color.clear
-//                            .opacity(0.50)
                         .frame(height: geometry.size.height * Self.barHeightFactor)
-                }
-                .overlay(alignment: .bottom) {
-                    buttonsView()
-                        .frame(height: geometry.size.height * Self.barHeightFactor)
-//                            .background(.black.opacity(0.50))
                 }
                 .overlay(alignment: .center)  {
                     Color.clear
@@ -38,24 +32,32 @@ struct CameraView: View {
                         .accessibilityLabel("View Finder")
                         .accessibilityAddTraits([.isImage])
                 }
+				.overlay(alignment: .bottom) {
+					buttonsView()
+						.frame(height: geometry.size.height * Self.barHeightFactor)
+						.padding(.bottom, 30)
+				}
                 .background(.black)
 				.gesture(
 					MagnifyGesture()
 						.onChanged { value in
-							currentZoom = value.magnification - 1
-							model.camera.setZoomFactor(currentZoom)
+							gestureZoom = value.magnification
+							let newZoom = totalZoom * gestureZoom
+							model.camera.setZoomFactor(newZoom)
 						}
 						.onEnded { value in
-							totalZoom += currentZoom
-							currentZoom = totalZoom
+							totalZoom *= value.magnification
+							gestureZoom = 1.0
 						}
 				)
 				.accessibilityZoomAction { action in
+					let zoomStep: CGFloat = 1.2
 					if action.direction == .zoomIn {
-						totalZoom += 1
+						totalZoom *= zoomStep
 					} else {
-						totalZoom -= 1
+						totalZoom /= zoomStep
 					}
+					model.camera.setZoomFactor(totalZoom)
 				}
         }
         .task {
@@ -79,16 +81,6 @@ struct CameraView: View {
 					} label: {
 						Image(systemName: model.camera.useFlash ? "bolt.fill" : "bolt.slash.fill")
 					}
-					Button {
-						model.camera.setZoomFactor(5)
-					} label: {
-						Text("x5")
-					}
-					Button {
-						model.camera.setZoomFactor(1)
-					} label: {
-						Text("x1")
-					}
 				}
             }
         }
@@ -110,53 +102,71 @@ struct CameraView: View {
         .ignoresSafeArea()
         .statusBar(hidden: true)
     }
+	
+	private func zoomSlider() -> some View {
+		VStack(alignment: .leading, spacing: 4) {
+			Text("Zoom: \(String(format: "%.1fx", totalZoom))")
+				.font(.caption)
+				.foregroundColor(.white)
+			Slider(value: $totalZoom, in: 1...10, step: 0.1, onEditingChanged: { _ in
+				model.camera.setZoomFactor(totalZoom)
+			})
+			.accentColor(.white)
+		}
+		.padding(.horizontal)
+		.onChange(of: totalZoom) { oldValue, newValue in
+			model.camera.setZoomFactor(totalZoom)
+		}
+	}
     
     private func buttonsView() -> some View {
-        HStack(spacing: 60) {
-            
-			Spacer()
-			
-            Button(action: {
-                navigationManager.path.append(model.photoCollection)
-            }) {
-                Label {
-                    Text("Gallery")
-                } icon: {
-                    ThumbnailView(image: model.thumbnailImage)
-                }
-            }
-            
-            Button {
-                model.camera.takePhoto()
-            } label: {
-                Label {
-                    Text("Take Photo")
-                } icon: {
-                    ZStack {
-                        Circle()
-                            .strokeBorder(.white, lineWidth: 3)
-                            .frame(width: 62, height: 62)
-                        Circle()
-                            .fill(.white)
-                            .frame(width: 50, height: 50)
-                    }
-                }
-            }
-            
-            Button {
-                model.camera.switchCaptureDevice()
-            } label: {
-                Label("Switch Camera", systemImage: "arrow.triangle.2.circlepath")
-                    .font(.system(size: 36, weight: .bold))
-                    .foregroundColor(.white)
-            }
-            
-            Spacer()
-        
-        }
-        .buttonStyle(.plain)
-        .labelStyle(.iconOnly)
-        .padding()
+		VStack {
+			HStack(spacing: 60) {
+				
+				Spacer()
+				
+				Button(action: {
+					navigationManager.path.append(model.photoCollection)
+				}) {
+					Label {
+						Text("Gallery")
+					} icon: {
+						ThumbnailView(image: model.thumbnailImage)
+					}
+				}
+				
+				Button {
+					model.camera.takePhoto()
+				} label: {
+					Label {
+						Text("Take Photo")
+					} icon: {
+						ZStack {
+							Circle()
+								.strokeBorder(.white, lineWidth: 3)
+								.frame(width: 62, height: 62)
+							Circle()
+								.fill(.white)
+								.frame(width: 50, height: 50)
+						}
+					}
+				}
+				
+				Button {
+					model.camera.switchCaptureDevice()
+				} label: {
+					Label("Switch Camera", systemImage: "arrow.triangle.2.circlepath")
+						.font(.system(size: 36, weight: .bold))
+						.foregroundColor(.white)
+				}
+				
+				Spacer()
+				
+			}
+			.buttonStyle(.plain)
+			.labelStyle(.iconOnly)
+			.padding()
+		}
     }
     
     @ViewBuilder

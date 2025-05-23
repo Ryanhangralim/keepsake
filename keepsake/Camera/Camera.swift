@@ -18,6 +18,10 @@ class Camera: NSObject {
     private var videoOutput: AVCaptureVideoDataOutput?
     private var sessionQueue: DispatchQueue!
 	
+	var maxZoomFactor: CGFloat? {
+		captureDevice?.activeFormat.videoMaxZoomFactor
+	}
+	
 	var useFlash = false
     
     private var allCaptureDevices: [AVCaptureDevice] {
@@ -261,19 +265,15 @@ class Camera: NSObject {
 	
 	func setZoomFactor(_ factor: CGFloat, animated: Bool = true, rate: Float = 2.0) {
 		guard let device = captureDevice else { return }
-		let clampedZoomFactor = max(1.0, min(factor, device.activeFormat.videoMaxZoomFactor))
+		
+		// Get the actual max zoom factor from the device
+		let clampedZoomFactor = max(1.0, min(factor, 10))
 		
 		sessionQueue.async {
 			do {
 				try device.lockForConfiguration()
 				
-				if animated && abs(device.videoZoomFactor - clampedZoomFactor) > 0.01 {
-					// Use smooth ramping for zoom changes
-					device.ramp(toVideoZoomFactor: clampedZoomFactor, withRate: rate)
-				} else {
-					// Immediate zoom change
 					device.videoZoomFactor = clampedZoomFactor
-				}
 				
 				device.unlockForConfiguration()
 			} catch {
@@ -281,7 +281,6 @@ class Camera: NSObject {
 			}
 		}
 	}
-
     
     func stop() {
         guard isCaptureSessionConfigured else { return }

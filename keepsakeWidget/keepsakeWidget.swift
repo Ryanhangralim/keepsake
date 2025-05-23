@@ -63,7 +63,7 @@ struct SimpleEntry: TimelineEntry {
 	// Get album emoji from UserDefaults
 	private func getAlbumEmoji(for albumId: String?) -> String {
 		guard let albumId = albumId,
-			  let sharedDefaults = UserDefaults(suiteName: "group.com.brats.keepsake"),
+			  let sharedDefaults = UserDefaults(suiteName: "group.bratss.keepsake"),
 			  let albumsMetadata = sharedDefaults.dictionary(forKey: "AlbumsMetadata") as? [String: [String: String]],
 			  let metadata = albumsMetadata[albumId],
 			  let emoji = metadata["emoji"] else {
@@ -75,7 +75,7 @@ struct SimpleEntry: TimelineEntry {
 	// Get album color from UserDefaults
 	private func getAlbumColorHex(for albumId: String?) -> String {
 		guard let albumId = albumId,
-			  let sharedDefaults = UserDefaults(suiteName: "group.com.brats.keepsake"),
+			  let sharedDefaults = UserDefaults(suiteName: "group.bratss.keepsake"),
 			  let albumsMetadata = sharedDefaults.dictionary(forKey: "AlbumsMetadata") as? [String: [String: String]],
 			  let metadata = albumsMetadata[albumId],
 			  let colorHex = metadata["colorHex"] else {
@@ -125,7 +125,7 @@ struct KipsekWidgetEntryView: View {
 
 struct KipsekWidget: Widget {
 	var body: some WidgetConfiguration {
-		AppIntentConfiguration(kind: "group.com.brats.keepsake", intent: ConfigurationAppIntent.self, provider: Provider()) { entry in
+		AppIntentConfiguration(kind: "group.bratss.keepsake", intent: ConfigurationAppIntent.self, provider: Provider()) { entry in
 			KipsekWidgetEntryView(entry: entry)
 		}
 		.configurationDisplayName("Kipsek")

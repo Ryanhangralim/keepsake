@@ -16,7 +16,7 @@ class AlbumManager: ObservableObject {
 	// Add prefix for album name
 	private let albumPrefix = "🌅 "
 	// Use shared UserDefaults
-	private let sharedDefaults = UserDefaults(suiteName: "group.com.brats.keepsake")
+	private let sharedDefaults = UserDefaults(suiteName: "group.bratss.keepsake")
 	
 	init() {
 		requestAuthorization()
