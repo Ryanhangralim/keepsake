@@ -6,61 +6,93 @@
 //
 
 import SwiftUI
+import Photos
 
 struct AlbumCardView: View {
-    let title: String
-    let gradient: LinearGradient
-    let metadata: AlbumMetadata
-
-    init(title: String, metadata: AlbumMetadata) {
-        self.title = title
-        self.gradient = AlbumCardView.randomGradient()
-        self.metadata = metadata
-    }
-
+    @EnvironmentObject var albumManager: AlbumManager
+    @Environment(\.colorScheme) var colorScheme
+    let album: PHAssetCollection
+    
     var body: some View {
-        VStack {
-            ZStack {
-                Color(hex: metadata.colorHex)
-                    .aspectRatio(1.0, contentMode: .fill)
+        let title = album.localizedTitle?.replacingOccurrences(of: "🌅 ", with: "") ?? "Unnamed"
+//        let metadata =  albumManager.loadAlbumMetadata(for: album.localIdentifier)
+//        let color = colorScheme == .dark ? Color(hex: "#1C1C1E") : Color(hex: "#F0F0F0")
+        let color = Color(hex: "#1C1C1E")
 
-                VStack(spacing: 8) {
-                    Text(metadata.emoji)
-                        .font(.system(size: 48))
+        
+            if let thumbnail = albumManager.thumbnailCache[album.localIdentifier] {
+                // Full card with thumbnail background
+                ZStack {
+                    // Thumbnail as background
+                    thumbnail
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 165, height: 165)
+                        .clipped()
+                        .cornerRadius(15)
 
-                    Text(title)
-                        .font(.title3)
-                        .foregroundColor(.white)
-                        .multilineTextAlignment(.center)
-                        .lineLimit(2)
-                        .padding(.horizontal, 8)
+                    // Gradient overlay at bottom
+                    LinearGradient(
+                        gradient: Gradient(colors: [Color.black.opacity(0.6), Color.clear]),
+                        startPoint: .bottom,
+                        endPoint: .top
+                    )
+                    .cornerRadius(15)
+
+                    // Text aligned to bottom leading
+                    VStack {
+                        Spacer()
+                        HStack {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(title)
+                                    .font(.title2)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(.white)
+                                    .multilineTextAlignment(.leading)
+                                    .lineLimit(1)
+                                    .padding(.horizontal, 8)
+
+                                Text("tap to open camera")
+                                    .font(.caption2)
+                                    .fontWeight(.light)
+                                    .foregroundStyle(.white)
+                                    .padding(.horizontal, 8)
+                            }
+                            .padding(.bottom, 8)
+
+                            Spacer()
+                        }
+                    }
+                }
+                .frame(width: 165, height: 165)
+                .background(Color(.systemBackground))
+                .clipShape(RoundedRectangle(cornerRadius: 15, style: .continuous))
+            } else {
+                // Placeholder while loading
+                ZStack {
+                    Rectangle()
+                        .fill(color)
+                        .frame(width: 165, height: 165)
+                        .cornerRadius(15)
+
+                    VStack(alignment: .center, spacing: 4) {
+                        Text(title)
+                            .font(.title)
+                            .fontWeight(.bold)
+                            .foregroundColor(.white)
+                            .multilineTextAlignment(.center)
+                            .lineLimit(1)
+
+                        Text("tap to open camera")
+                            .font(.caption2)
+                            .fontWeight(.light)
+                            .foregroundColor(.white)
+                    }
+                    .multilineTextAlignment(.center)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
             }
-            .frame(width: 165, height: 165)
-            .clipShape(RoundedRectangle(cornerRadius: 15, style: .continuous))
-            .background(Color(.systemBackground))
-            .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 2)
-            }
         }
-
-    static func randomGradient() -> LinearGradient {
-        let gradients: [LinearGradient] = [
-            LinearGradient(colors: [.blue, .purple], startPoint: .top, endPoint: .bottom),
-            LinearGradient(colors: [.orange, .pink], startPoint: .topLeading, endPoint: .bottomTrailing),
-            LinearGradient(colors: [.green, .blue], startPoint: .leading, endPoint: .trailing),
-            LinearGradient(colors: [.yellow, .red], startPoint: .bottomLeading, endPoint: .topTrailing),
-            LinearGradient(colors: [.mint, .teal], startPoint: .top, endPoint: .bottomTrailing),
-            LinearGradient(colors: [.indigo, .cyan], startPoint: .topLeading, endPoint: .bottomTrailing),
-            LinearGradient(colors: [.purple, .pink], startPoint: .top, endPoint: .bottom),
-            LinearGradient(colors: [.red, .orange], startPoint: .leading, endPoint: .trailing),
-            LinearGradient(colors: [.cyan, .mint], startPoint: .top, endPoint: .bottomTrailing),
-            LinearGradient(colors: [.teal, .green], startPoint: .bottom, endPoint: .top),
-            LinearGradient(colors: [.brown, .yellow], startPoint: .bottomLeading, endPoint: .topTrailing),
-            LinearGradient(colors: [.gray, .black], startPoint: .topLeading, endPoint: .bottomTrailing)
-        ]
-
-        return gradients.randomElement()!
-    }
 }
 
 extension Color {
@@ -92,6 +124,6 @@ extension Color {
     }
 }
 
-#Preview {
-    AlbumCardView(title: "Vacation 2024", metadata: AlbumMetadata(emoji: "🌴", colorHex: "#FF5F6D"))
-}
+//#Preview {
+//    AlbumCardView(title: "Vacation 2024", metadata: AlbumMetadata(emoji: "🌴", colorHex: "#FF5F6D"), model: <#DataModel#>)
+//}

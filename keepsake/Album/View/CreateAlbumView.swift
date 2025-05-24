@@ -25,10 +25,10 @@ struct CreateAlbumView: View {
             VStack(spacing: 24) {
                 Spacer().frame(height: 16)
                 
-                AlbumCardView(
-                    title: albumName.isEmpty ? "Album Name" : albumName,
-                    metadata: AlbumMetadata(emoji: selectedEmoji, colorHex: selectedColor)
-                )
+//                AlbumCardView(
+//                    title: albumName.isEmpty ? "Album Name" : albumName,
+//                    metadata: AlbumMetadata(emoji: selectedEmoji, colorHex: selectedColor)
+//                )
                 
                 // Name field
                 Text("Album Name")

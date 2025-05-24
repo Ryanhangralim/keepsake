@@ -10,6 +10,7 @@ import SwiftUI
 struct CameraView: View {
     @StateObject var model: DataModel
     @EnvironmentObject var navigationManager: NavigationManager
+    @Environment(\.presentationMode) var presentationMode
     @State private var isAlbumMenuVisible = false
     @StateObject var albumManager = AlbumManager()
 	@State private var totalZoom: CGFloat = 1.0
@@ -70,6 +71,17 @@ struct CameraView: View {
                 await model.camera.start()
                 await model.loadPhotos()
                 await model.loadThumbnail()
+            }
+        }
+        .navigationBarBackButtonHidden(true)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button(action: {
+                    // Custom back action (usually: pop the view)
+                    presentationMode.wrappedValue.dismiss()
+                }) {
+                    Image(systemName: "xmark")
+                }
             }
         }
         .toolbar {
@@ -185,7 +197,7 @@ struct CameraView: View {
                 }
             }
         } label: {
-            Label("Change Album", systemImage: "folder")
+            Label("Change Album", systemImage: "list.bullet")
                 .foregroundColor(.white)
         }
     }

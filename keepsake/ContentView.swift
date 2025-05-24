@@ -9,11 +9,14 @@ import SwiftUI
 import Photos
 
 struct ContentView: View {
-    static let sharedDefaults = UserDefaults(suiteName: "group.bratss.keepsake")
+    static let sharedDefaults = UserDefaults(suiteName: "group.com.brats.keepsake")
     @Environment(\.scenePhase) var scenePhase
     @StateObject private var albumManager = AlbumManager()
     @StateObject private var navigationManager = NavigationManager.shared
     @State private var selectedFolderIdentifier: String?
+    
+    @State private var showingAlert = false
+    @State private var name = ""
     
     init() {
         _selectedFolderIdentifier = State(initialValue: Self.sharedDefaults?.string(forKey: "selectedFolder"))
@@ -30,10 +33,28 @@ struct ContentView: View {
                 LazyVGrid(columns: columns, spacing: 15) {
                     ForEach(albumManager.albums, id: \.localIdentifier) { album in
                         NavigationLink(value: album) {
-                            AlbumCardView(
-                                title: album.localizedTitle?.replacingOccurrences(of: "🌅 ", with: "") ?? "Unnamed",
-                                metadata: albumManager.loadAlbumMetadata(for: album.localIdentifier)
-                            )
+                            AlbumCardView(album: album)
+                            .environmentObject(albumManager)
+                            .contextMenu {
+                                    Button {
+                                        // Rename action
+                                        showingAlert = true
+                                    } label: {
+                                        Label("Rename", systemImage: "pencil")
+                                    }
+
+                                    Button {
+                                        // Toggle
+                                    } label: {
+                                        Label("Toggle", systemImage: "photo")
+                                    }
+
+                                    Button(role: .destructive) {
+                                        // Delete
+                                    } label: {
+                                        Label("Delete", systemImage: "trash")
+                                    }
+                                }
                         }
                     }
                 }
@@ -89,6 +110,13 @@ struct ContentView: View {
 					DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                         navigationManager.path.append(album)
                     }
+                }
+            }
+            .alert("Rename Album", isPresented: $showingAlert) {
+                TextField("Enter new album name", text: $name)
+                HStack{
+                    Button("Cancel", role: .cancel){}
+                    Button("Done"){}
                 }
             }
         }
