@@ -51,13 +51,16 @@ struct SimpleEntry: TimelineEntry {
 	let date: Date
 	let configuration: ConfigurationAppIntent
 	
-	// Define metadata directly in SimpleEntry
 	var emoji: String {
 		return getAlbumEmoji(for: configuration.album?.id)
 	}
 	
 	var colorHex: String {
 		return getAlbumColorHex(for: configuration.album?.id)
+	}
+	
+	var showThumbnail: Bool {
+		return getShowThumbnail(for: configuration.album?.id)
 	}
 	
 	// Get album emoji from UserDefaults
@@ -83,44 +86,54 @@ struct SimpleEntry: TimelineEntry {
 		}
 		return colorHex
 	}
+	
+	private func getShowThumbnail(for albumId: String?) -> Bool {
+		guard let albumId = albumId,
+			  let sharedDefaults = UserDefaults(suiteName: "group.bratss.keepsake"),
+			  let albumsMetadata = sharedDefaults.dictionary(forKey: "AlbumsMetadata") as? [String: [String: Any]],
+			  let metadata = albumsMetadata[albumId],
+			  let showThumbnail = metadata["showThumbnail"] as? Bool else {
+			return false
+		}
+		return showThumbnail
+	}
 }
 
 struct KipsekWidgetEntryView: View {
-	@Environment(\.colorScheme) var colorScheme
-	var entry: Provider.Entry
-	
-	var body: some View {
-		// Main content
-		VStack {
-			if let album = entry.configuration.album {
-				VStack(spacing: 8) {
-					Text(entry.emoji)
-						.font(.system(size: 36))
-					
-					Text(String(album.title.dropFirst()))
-						.font(.headline)
-						.foregroundColor(.primary)
-				}
-			} else {
-				VStack(spacing: 8) {
-					Text("📸")
-						.font(.system(size: 36))
-					
-					Text("Tap & Hold -> Edit Widget")
-						.font(.caption)
-						.foregroundColor(.primary)
-				}
-			}
-		}
-		.padding()
-		.frame(maxWidth: .infinity, maxHeight: .infinity)
-		.widgetURL(URL(string: "keepsake://select-folder?folder=\(entry.configuration.album?.id ?? "Failed")"))
-		// Use the containerBackground modifier to set the color for the entire widget
-		.containerBackground(for: .widget) {
-			Color(hex: entry.colorHex)
-				.ignoresSafeArea()
-		}
-	}
+    @Environment(\.colorScheme) var colorScheme
+    var entry: Provider.Entry
+    
+    var body: some View {
+        // Main content
+        VStack {
+            if let album = entry.configuration.album {
+                VStack(spacing: 8) {
+                    Text(entry.emoji)
+                        .font(.system(size: 36))
+                    
+                    Text(String(album.title.dropFirst()))
+                        .font(.headline)
+                        .foregroundColor(.primary)
+                }
+            } else {
+                VStack(spacing: 8) {
+                    Text("📸")
+                        .font(.system(size: 36))
+                    
+                    Text("Tap & Hold -> Edit Widget")
+                        .font(.caption)
+                        .foregroundColor(.primary)
+                }
+            }
+        }
+        .padding()
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .widgetURL(URL(string: "keepsake://select-folder?folder=\(entry.configuration.album?.id ?? "Failed")"))
+        .containerBackground(for: .widget) {
+            Color(hex: entry.colorHex)
+                .ignoresSafeArea()
+        }
+    }
 }
 
 struct KipsekWidget: Widget {

@@ -8,8 +8,8 @@
 import Foundation
 
 struct AlbumMetadata: Codable {
-    let emoji: String
-    let colorHex: String
-    
-    static let defaultMetadata = AlbumMetadata(emoji: "📷", colorHex: "#CCCCCC")
+	let showThumbnail: Bool
+	
+	
+	static let defaultMetadata = AlbumMetadata(showThumbnail: true)
 }

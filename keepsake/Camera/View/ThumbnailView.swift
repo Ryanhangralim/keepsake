@@ -19,7 +19,7 @@ struct ThumbnailView: View {
                     .scaledToFill()
             }
         }
-        .frame(width: 41, height: 41)
+        .frame(width: 48, height: 48)
         .cornerRadius(11)
     }
 }

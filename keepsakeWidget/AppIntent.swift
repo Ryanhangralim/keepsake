@@ -60,34 +60,35 @@ struct AlbumQuery: EntityQuery {
 	
 	// Load album metadata from shared UserDefaults (same as AlbumManager)
 	private func loadAlbumMetadata(for albumId: String) -> AlbumMetadata {
-		guard let albumsMetadata = sharedDefaults?.dictionary(forKey: "AlbumsMetadata") as? [String: [String: String]],
+		guard let albumsMetadata = sharedDefaults?.dictionary(forKey: "AlbumsMetadata") as? [String: [String: Any]],
 			  let metadata = albumsMetadata[albumId],
-			  let emoji = metadata["emoji"] else {
+			  let emoji = metadata["emoji"] as? String else {
 			return AlbumMetadata.defaultMetadata
 		}
 		
-		return AlbumMetadata(emoji: emoji, colorHex: metadata["colorHex"] ?? "#CCCCCC")
+		return AlbumMetadata(
+			emoji: emoji,
+			colorHex: metadata["colorHex"] as? String ?? "#CCCCCC")
 	}
 }
 
-// Add AlbumMetadata struct to match the one in your main app
 private struct AlbumMetadata {
-	let emoji: String
-	let colorHex: String
-	
-	static let defaultMetadata = AlbumMetadata(emoji: "📷", colorHex: "#CCCCCC")
+    let emoji: String
+    let colorHex: String
+    
+    static let defaultMetadata = AlbumMetadata(emoji: "📷", colorHex: "#CCCCCC")
 }
 
 struct ConfigurationAppIntent: WidgetConfigurationIntent {
-	static var title: LocalizedStringResource { "Configuration" }
-	static var description: IntentDescription { "Choose an album to display." }
-	
-	@Parameter(title: "Album")
-	var album: AlbumEntity?
-	
-	func perform() async throws -> some IntentResult {
-		return .result()
-	}
+    static var title: LocalizedStringResource { "Configuration" }
+    static var description: IntentDescription { "Choose an album to display." }
+    
+    @Parameter(title: "Album")
+    var album: AlbumEntity?
+    
+    func perform() async throws -> some IntentResult {
+        return .result()
+    }
 }
 
 
