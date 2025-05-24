@@ -50,12 +50,15 @@ struct ContentView: View {
                                     
                                     Button {
                                         // Toggle
+                                        albumManager.toggleAlbumThumbnail(albumId: album.localIdentifier)
                                     } label: {
-                                        Label("Toggle", systemImage: "photo")
+                                        Label("Change Cover", systemImage: "arrow.2.squarepath")
                                     }
                                     
                                     Button(role: .destructive) {
                                         // Delete
+                                        albumManager.deleteAlbumMetadata(for: album.localIdentifier)
+                                        albumManager.deleteAlbum(album: album)
                                     } label: {
                                         Label("Delete", systemImage: "trash")
                                     }
@@ -70,11 +73,6 @@ struct ContentView: View {
             .navigationDestination(for: PHAssetCollection.self) { album in
                 CameraView(model: DataModel(album: album))
             }
-            //            .navigationDestination(for: String.self) { destination in
-            //                if destination == "CreateAlbum" {
-            //                    CreateAlbumView(albumManager: albumManager)
-            //                }
-            //            }
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
@@ -142,7 +140,7 @@ struct ContentView: View {
                         if let album = contextMenuAlbum{
                             albumManager.renameAlbum(album: album, newTitle: trimmedName)
                         }
-                        newAlbumName = "" // Optional: clear text field
+                        renameAlbumName = "" // Optional: clear text field
                     }
                     .disabled(renameAlbumName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                 }

@@ -15,11 +15,11 @@ struct AlbumCardView: View {
     
     var body: some View {
         let title = album.localizedTitle?.replacingOccurrences(of: "🌅 ", with: "") ?? "Unnamed"
-//        let metadata =  albumManager.loadAlbumMetadata(for: album.localIdentifier)
+        let metadata =  albumManager.loadAlbumMetadata(for: album.localIdentifier)
 //        let color = colorScheme == .dark ? Color(hex: "#1C1C1E") : Color(hex: "#F0F0F0")
         let color = Color(hex: "#1C1C1E")
 
-        
+        if metadata.showThumbnail {
             if let thumbnail = albumManager.thumbnailCache[album.localIdentifier] {
                 // Full card with thumbnail background
                 ZStack {
@@ -68,31 +68,12 @@ struct AlbumCardView: View {
                 .background(Color(.systemBackground))
                 .clipShape(RoundedRectangle(cornerRadius: 15, style: .continuous))
             } else {
-                // Placeholder while loading
-                ZStack {
-                    Rectangle()
-                        .fill(color)
-                        .frame(width: 165, height: 165)
-                        .cornerRadius(15)
-
-                    VStack(alignment: .center, spacing: 4) {
-                        Text(title)
-                            .font(.title)
-                            .fontWeight(.bold)
-                            .foregroundColor(.white)
-                            .multilineTextAlignment(.center)
-                            .lineLimit(1)
-
-                        Text("tap to open camera")
-                            .font(.caption2)
-                            .fontWeight(.light)
-                            .foregroundColor(.white)
-                    }
-                    .multilineTextAlignment(.center)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                }
+                DefaultAlbumCardView(title: title, color: color)
             }
+        } else {
+            DefaultAlbumCardView(title: title, color: color)
         }
+    }
 }
 
 extension Color {

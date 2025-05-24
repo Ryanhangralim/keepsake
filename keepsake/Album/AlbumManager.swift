@@ -126,7 +126,22 @@ class AlbumManager: ObservableObject {
             }
         })
     }
-
+    
+    func deleteAlbum(album: PHAssetCollection) {
+        PHPhotoLibrary.shared().performChanges({
+            PHAssetCollectionChangeRequest.deleteAssetCollections([album] as NSFastEnumeration)
+        }, completionHandler: { (success, error) in
+            DispatchQueue.main.async {
+                self.loadAlbums()
+            }
+            
+            if success {
+                print("Album deleted successfully")
+            } else if let error = error {
+                print("Error deleting album: \(error.localizedDescription)")
+            }
+        })
+    }
 
     func saveImage(_ image: UIImage, to album: PHAssetCollection) {
         PHPhotoLibrary.shared().performChanges({
@@ -154,6 +169,25 @@ class AlbumManager: ObservableObject {
             sharedDefaults?.set(albumsMetadata, forKey: "AlbumsMetadata")
         }
     }
+    
+    func toggleAlbumThumbnail(albumId: String) {
+        var albumsMetadata = sharedDefaults?.dictionary(forKey: "AlbumsMetadata") as? [String: [String: Any]] ?? [:]
+        
+        // Get existing metadata for this album or create new dictionary
+        var albumMetadata = albumsMetadata[albumId] ?? [:]
+        
+        // Fetch current showThumbnail value and toggle it (defaults to false if not set)
+        let currentShowThumbnail = albumMetadata["showThumbnail"] as? Bool ?? false
+        albumMetadata["showThumbnail"] = !currentShowThumbnail
+        
+        // Save back to the main metadata dictionary
+        albumsMetadata[albumId] = albumMetadata
+        sharedDefaults?.set(albumsMetadata, forKey: "AlbumsMetadata")
+        
+        DispatchQueue.main.async {
+            self.loadAlbums()
+        }
+    }
 
     func loadAlbumMetadata(for albumId: String) -> AlbumMetadata {
         guard let albumsMetadata = sharedDefaults?.dictionary(forKey: "AlbumsMetadata") as? [String: [String: Any]],
@@ -163,5 +197,14 @@ class AlbumManager: ObservableObject {
         }
 
         return AlbumMetadata(showThumbnail: showThumbnail)
+    }
+    
+    func deleteAlbumMetadata(for albumId: String) {
+        guard var albumsMetadata = sharedDefaults?.dictionary(forKey: "AlbumsMetadata") as? [String: [String: Any]] else {
+            return
+        }
+
+        albumsMetadata.removeValue(forKey: albumId)
+        sharedDefaults?.set(albumsMetadata, forKey: "AlbumsMetadata")
     }
 }
