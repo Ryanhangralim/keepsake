@@ -107,6 +107,26 @@ class AlbumManager: ObservableObject {
             }
         }
     }
+    
+    func renameAlbum(album: PHAssetCollection, newTitle: String) {
+        let newName = albumPrefix + newTitle
+
+        PHPhotoLibrary.shared().performChanges({
+            guard let albumChangeRequest = PHAssetCollectionChangeRequest(for: album) else { return }
+            albumChangeRequest.title = newName
+        }, completionHandler: { (success, error) in
+            DispatchQueue.main.async {
+                self.loadAlbums()
+            }
+            
+            if success {
+                print("Album renamed successfully")
+            } else if let error = error {
+                print("Error renaming album: \(error.localizedDescription)")
+            }
+        })
+    }
+
 
     func saveImage(_ image: UIImage, to album: PHAssetCollection) {
         PHPhotoLibrary.shared().performChanges({
@@ -125,24 +145,23 @@ class AlbumManager: ObservableObject {
         })
     }
 
-    func saveAlbumMetadata(albumId: String, emoji: String, hexColor: String) {
-        if var albumsMetadata = sharedDefaults?.dictionary(forKey: "AlbumsMetadata") as? [String: [String: String]] {
-            albumsMetadata[albumId] = ["emoji": emoji, "colorHex": hexColor]
+    func saveAlbumMetadata(albumId: String, showThumbnail: Bool) {
+        if var albumsMetadata = sharedDefaults?.dictionary(forKey: "AlbumsMetadata") as? [String: [String: Any]] {
+            albumsMetadata[albumId] = ["showThumbnail": showThumbnail]
             sharedDefaults?.set(albumsMetadata, forKey: "AlbumsMetadata")
         } else {
-            let albumsMetadata = [albumId: ["emoji": emoji, "colorHex": hexColor]]
+            let albumsMetadata: [String: [String: Any]] = [albumId: ["showThumbnail": showThumbnail]]
             sharedDefaults?.set(albumsMetadata, forKey: "AlbumsMetadata")
         }
     }
 
     func loadAlbumMetadata(for albumId: String) -> AlbumMetadata {
-        guard let albumsMetadata = sharedDefaults?.dictionary(forKey: "AlbumsMetadata") as? [String: [String: String]],
+        guard let albumsMetadata = sharedDefaults?.dictionary(forKey: "AlbumsMetadata") as? [String: [String: Any]],
               let metadata = albumsMetadata[albumId],
-              let emoji = metadata["emoji"],
-              let colorHex = metadata["colorHex"] else {
+              let showThumbnail = metadata["showThumbnail"] as? Bool else {
             return AlbumMetadata.defaultMetadata
         }
 
-        return AlbumMetadata(emoji: emoji, colorHex: colorHex)
+        return AlbumMetadata(showThumbnail: showThumbnail)
     }
 }

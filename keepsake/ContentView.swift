@@ -14,9 +14,13 @@ struct ContentView: View {
     @StateObject private var albumManager = AlbumManager()
     @StateObject private var navigationManager = NavigationManager.shared
     @State private var selectedFolderIdentifier: String?
-    
-    @State private var showingAlert = false
-    @State private var name = ""
+    // New Album
+    @State private var showingNewAlbumAlert = false
+    @State private var newAlbumName = ""
+    // Rename
+    @State private var showingRenameAlbumAlert = false
+    @State private var renameAlbumName = ""
+    @State private var contextMenuAlbum: PHAssetCollection?
     
     init() {
         _selectedFolderIdentifier = State(initialValue: Self.sharedDefaults?.string(forKey: "selectedFolder"))
@@ -26,7 +30,7 @@ struct ContentView: View {
         GridItem(.flexible()),
         GridItem(.flexible())
     ]
-
+    
     var body: some View {
         NavigationStack(path: $navigationManager.path) {
             ScrollView {
@@ -34,21 +38,22 @@ struct ContentView: View {
                     ForEach(albumManager.albums, id: \.localIdentifier) { album in
                         NavigationLink(value: album) {
                             AlbumCardView(album: album)
-                            .environmentObject(albumManager)
-                            .contextMenu {
+                                .environmentObject(albumManager)
+                                .contextMenu {
                                     Button {
                                         // Rename action
-                                        showingAlert = true
+                                        contextMenuAlbum = album
+                                        showingRenameAlbumAlert = true
                                     } label: {
                                         Label("Rename", systemImage: "pencil")
                                     }
-
+                                    
                                     Button {
                                         // Toggle
                                     } label: {
                                         Label("Toggle", systemImage: "photo")
                                     }
-
+                                    
                                     Button(role: .destructive) {
                                         // Delete
                                     } label: {
@@ -65,16 +70,16 @@ struct ContentView: View {
             .navigationDestination(for: PHAssetCollection.self) { album in
                 CameraView(model: DataModel(album: album))
             }
-            .navigationDestination(for: String.self) { destination in
-                if destination == "CreateAlbum" {
-                    CreateAlbumView(albumManager: albumManager)
-                }
-            }
+            //            .navigationDestination(for: String.self) { destination in
+            //                if destination == "CreateAlbum" {
+            //                    CreateAlbumView(albumManager: albumManager)
+            //                }
+            //            }
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
-                        navigationManager.path = NavigationPath()
-                        navigationManager.path.append("CreateAlbum")
+                        // Add new album action
+                        showingNewAlbumAlert = true
                     } label: {
                         Image(systemName: "plus")
                             .imageScale(.large)
@@ -95,28 +100,51 @@ struct ContentView: View {
             }
             .onOpenURL { url in
                 loadFolders()
-				
-				guard url.scheme == "keepsake",
-					  url.host == "select-folder",
-					  let components = URLComponents(url: url, resolvingAgainstBaseURL: true),
-					  let folderQuery = components.queryItems?.first(where: { $0.name == "folder" })?.value
-				else {
-					print("Invalid deep link: \(url)")
-					return
-				}
-				
-				if let album = getAlbum(identifier: folderQuery) {
+                
+                guard url.scheme == "keepsake",
+                      url.host == "select-folder",
+                      let components = URLComponents(url: url, resolvingAgainstBaseURL: true),
+                      let folderQuery = components.queryItems?.first(where: { $0.name == "folder" })?.value
+                else {
+                    print("Invalid deep link: \(url)")
+                    return
+                }
+                
+                if let album = getAlbum(identifier: folderQuery) {
                     navigationManager.path = NavigationPath()
-					DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                         navigationManager.path.append(album)
                     }
                 }
             }
-            .alert("Rename Album", isPresented: $showingAlert) {
-                TextField("Enter new album name", text: $name)
+            .alert("New Album", isPresented: $showingNewAlbumAlert) {
+                TextField("Enter new album name", text: $newAlbumName)
+                HStack{
+                    Button("Cancel", role: .cancel) {}
+                    Button("Create") {
+                        let trimmedName = newAlbumName.trimmingCharacters(in: .whitespacesAndNewlines)
+                        albumManager.createAlbum(named: trimmedName) { newAlbum in
+                            if let album = newAlbum {
+                                albumManager.saveAlbumMetadata(albumId: album.localIdentifier, showThumbnail: true)
+                            }
+                        }
+                        newAlbumName = "" // Optional: clear text field
+                    }
+                    .disabled(newAlbumName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                }
+            }
+            .alert("Rename Album", isPresented: $showingRenameAlbumAlert) {
+                TextField("Enter new album name", text: $renameAlbumName)
                 HStack{
                     Button("Cancel", role: .cancel){}
-                    Button("Done"){}
+                    Button("Rename"){
+                        let trimmedName = renameAlbumName.trimmingCharacters(in: .whitespacesAndNewlines)
+                        if let album = contextMenuAlbum{
+                            albumManager.renameAlbum(album: album, newTitle: trimmedName)
+                        }
+                        newAlbumName = "" // Optional: clear text field
+                    }
+                    .disabled(renameAlbumName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                 }
             }
         }
@@ -137,4 +165,5 @@ struct ContentView: View {
         let userAlbums = PHAssetCollection.fetchAssetCollections(withLocalIdentifiers: [identifier], options: nil)
         return userAlbums.firstObject?.localizedTitle ?? "No Folder Selected"
     }
+    
 }
