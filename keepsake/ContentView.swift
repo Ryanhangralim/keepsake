@@ -7,9 +7,10 @@
 
 import SwiftUI
 import Photos
+import WidgetKit
 
 struct ContentView: View {
-	static let sharedDefaults = UserDefaults(suiteName: "group.com.brats.keepsake")
+	static let sharedDefaults = UserDefaults(suiteName: "group.bratss.keepsake")
 	@Environment(\.scenePhase) var scenePhase
 	@StateObject private var albumManager = AlbumManager()
 	@StateObject private var navigationManager = NavigationManager.shared
@@ -94,6 +95,10 @@ struct ContentView: View {
 			.onChange(of: scenePhase) { _, newState in
 				if newState == .active {
 					loadFolders()
+				} else if newState == .inactive {
+					WidgetCenter.shared.reloadAllTimelines()
+				} else if newState == .background {
+					WidgetCenter.shared.reloadAllTimelines()
 				}
 			}
 			.onOpenURL { url in

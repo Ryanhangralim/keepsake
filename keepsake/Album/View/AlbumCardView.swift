@@ -29,7 +29,6 @@ struct AlbumCardView: View {
 						.scaledToFill()
 						.frame(width: 165, height: 165)
 						.clipped()
-						.cornerRadius(15)
 					
 					// Gradient overlay at bottom
 					LinearGradient(
@@ -43,23 +42,21 @@ struct AlbumCardView: View {
 					VStack {
 						Spacer()
 						HStack {
-							VStack(alignment: .leading, spacing: 4) {
+							VStack(alignment: .leading, spacing: 2) {
 								Text(title)
 									.font(.title2)
 									.fontWeight(.semibold)
 									.foregroundColor(.white)
 									.multilineTextAlignment(.leading)
 									.lineLimit(1)
-									.padding(.horizontal, 8)
 								
 								Text("tap to open camera")
 									.font(.caption2)
 									.fontWeight(.light)
 									.foregroundStyle(.white)
-									.padding(.horizontal, 8)
 							}
-							.padding(.bottom, 8)
-							
+							.padding(.leading, 12)
+							.padding(.bottom, 12)
 							Spacer()
 						}
 					}

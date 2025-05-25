@@ -9,7 +9,5 @@ import Foundation
 
 struct AlbumMetadata: Codable {
 	let showThumbnail: Bool
-	
-	
 	static let defaultMetadata = AlbumMetadata(showThumbnail: true)
 }
