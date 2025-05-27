@@ -10,7 +10,7 @@ import Photos
 import WidgetKit
 
 struct ContentView: View {
-	static let sharedDefaults = UserDefaults(suiteName: "group.bratss.keepsake")
+	static let sharedDefaults = UserDefaults(suiteName: "group.com.brats.keepsake")
 	@Environment(\.scenePhase) var scenePhase
 	@StateObject private var albumManager = AlbumManager()
 	@StateObject private var navigationManager = NavigationManager.shared
@@ -72,9 +72,10 @@ struct ContentView: View {
 			}
 			.navigationBarTitleDisplayMode(.large)
 			.navigationTitle("My Albums")
-			.navigationDestination(for: PHAssetCollection.self) { album in
-				CameraView(model: DataModel(album: album))
-			}
+            .navigationDestination(for: PHAssetCollection.self) { album in
+                let refreshedAlbum = PHAssetCollection.fetchAssetCollections(withLocalIdentifiers: [album.localIdentifier], options: nil).firstObject ?? album
+                CameraView(model: DataModel(album: refreshedAlbum))
+            }
 			.toolbar {
 				ToolbarItem(placement: .navigationBarTrailing) {
 					Button {
