@@ -178,7 +178,7 @@ struct KipsekWidgetEntryView: View {
 //				Spacer()
 //			}
 			
-			Text(album.title.dropFirst().dropFirst())
+			Text(album.title)
 				.font(.title2)
 				.fontWeight(.semibold)
 				.foregroundColor(.white)
@@ -214,7 +214,7 @@ struct KipsekWidgetEntryView: View {
 						Spacer()
 						HStack {
 							VStack(alignment: .leading, spacing: 2) {
-								Text(album.title.dropFirst().dropFirst())
+								Text(album.title)
 									.font(.title2)
 									.fontWeight(.semibold)
 									.foregroundColor(.white)

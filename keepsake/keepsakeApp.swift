@@ -9,6 +9,12 @@ import SwiftUI
 
 @main
 struct keepsakeApp: App {
+	
+	init() {
+		// Inline Navigation Title
+		UINavigationBar.appearance().titleTextAttributes = [.foregroundColor: UIColor.white]
+	}
+	
     var body: some Scene {
         WindowGroup {
             ContentView()

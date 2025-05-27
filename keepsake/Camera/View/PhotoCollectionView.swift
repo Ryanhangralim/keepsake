@@ -12,6 +12,7 @@ struct PhotoCollectionView: View {
 	@ObservedObject var photoCollection : PhotoCollection
 	@EnvironmentObject var navigationManager: NavigationManager
 	@Environment(\.displayScale) private var displayScale
+	@Environment(\.presentationMode) var presentationMode
 	
 	private static let itemSpacing = 12.0
 	private static let itemCornerRadius = 15.0
@@ -40,12 +41,23 @@ struct PhotoCollectionView: View {
 			}
 			.padding([.vertical], Self.itemSpacing)
 		}
-		.navigationTitle(photoCollection.albumName?.replacingOccurrences(of: "🌅 ", with: "") ?? "Gallery")
 		.navigationBarTitleDisplayMode(.inline)
+		.navigationBarBackButtonHidden(true)
+		.toolbar {
+			ToolbarItem(placement: .navigationBarLeading) {
+				Button(action: {
+					presentationMode.wrappedValue.dismiss()
+				}) {
+					Image(systemName: "chevron.left")
+				}
+			}
+		}
+		.navigationTitle(photoCollection.albumName?.replacingOccurrences(of: "🌅 ", with: "") ?? "Gallery")
 		.navigationDestination(for: PhotoAsset.self) { asset in
 			PhotoView(asset: asset, cache: photoCollection.cache)
 		}
 		.statusBar(hidden: false)
+		.foregroundColor(.white) // Set the default text color to white
 	}
 	
 	private func photoItemView(asset: PhotoAsset) -> some View {

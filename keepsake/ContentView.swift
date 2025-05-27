@@ -70,6 +70,7 @@ struct ContentView: View {
 				.padding(.horizontal)
 				.padding(.top, 10)
 			}
+			.navigationBarTitleDisplayMode(.large)
 			.navigationTitle("My Albums")
 			.navigationDestination(for: PHAssetCollection.self) { album in
 				CameraView(model: DataModel(album: album))
@@ -80,8 +81,9 @@ struct ContentView: View {
 						// Add new album action
 						showingNewAlbumAlert = true
 					} label: {
-						Image(systemName: "plus")
+						Image(systemName: "folder.badge.plus")
 							.imageScale(.large)
+							.foregroundColor(.white) // Set the default text color to white
 					}
 				}
 			}
@@ -152,6 +154,7 @@ struct ContentView: View {
 			}
 		}
 		.environmentObject(navigationManager)
+		.preferredColorScheme(.dark)
 	}
 	
 	private func loadFolders() {

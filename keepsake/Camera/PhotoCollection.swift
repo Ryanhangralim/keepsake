@@ -16,7 +16,7 @@ class PhotoCollection: NSObject, ObservableObject {
         assetCollection?.localIdentifier
     }
     
-    var albumName: String?
+	@Published var albumName: String?
     
     var smartAlbumType: PHAssetCollectionSubtype?
     

@@ -18,10 +18,27 @@ struct CameraView: View {
 	@State private var wideZoomLevel: CGFloat = 1
 	@State private var ultraWideZoomLevel: CGFloat = 0.5
 	@State private var isUltraWideActive: Bool = false
+	@State private var shutterOn = false
+	@State private var flashOn = false
+	@State private var shootColdown = false
+	
+//	init() {
+//		// Large Navigation Title
+//		UINavigationBar.appearance().largeTitleTextAttributes = [.foregroundColor: UIColor.purple]
+//		// Inline Navigation Title
+//		UINavigationBar.appearance().titleTextAttributes = [.foregroundColor: UIColor.purple]
+//	}
 	
 	var body: some View {
 		VStack {
 			ViewfinderView(image: $model.viewfinderImage)
+				.overlay {
+					Color.black
+						.opacity(shutterOn ? 1 : 0)
+						.clipShape(RoundedRectangle(cornerRadius: 20))
+						.padding(29)
+						.animation(.easeInOut(duration: 0.1), value: shutterOn)
+				}
 				.id(model.selectedAlbumID) // forces the view to reload
 				.accessibilityElement()
 				.accessibilityLabel("View Finder")
@@ -108,6 +125,10 @@ struct CameraView: View {
 					Image(systemName: "xmark")
 				}
 			}
+			
+			ToolbarItem(placement: .navigationBarTrailing) {
+				albumMenu()
+			}
 		}
 		.navigationTitle(model.photoCollection.albumName?.replacingOccurrences(of: "🌅 ", with: "") ?? "Camera")
 		.navigationDestination(for: PhotoCollection.self) { photoCollection in
@@ -119,16 +140,9 @@ struct CameraView: View {
 					model.camera.isPreviewPaused = false
 				}
 		}
-		.toolbarColorScheme(.dark, for: .navigationBar) // Force dark mode for navigation bar
-		.toolbarBackground(.black, for: .navigationBar) // Set navigation bar background to black
-		.toolbarBackground(.visible, for: .navigationBar) // Make sure background is visible
-		.toolbar {
-			ToolbarItem(placement: .navigationBarTrailing) {
-				HStack {
-					albumMenu()
-				}
-			}
-		}
+//		.toolbarColorScheme(.dark, for: .navigationBar) // Force dark mode for navigation bar
+//		.toolbarBackground(.black, for: .navigationBar) // Set navigation bar background to black
+//		.toolbarBackground(.visible, for: .navigationBar) // Make sure background is visible
 		.foregroundColor(.white) // Set the default text color to white
 		.statusBar(hidden: true)
 		.background(.black)
@@ -150,6 +164,8 @@ struct CameraView: View {
 					.background(isUltraWideActive ? Color(red: 248/255, green: 215/255, blue: 74/255).opacity(0.3) : Color.white.opacity(0.1))
 					.clipShape(RoundedRectangle(cornerRadius: 999))
 					.foregroundStyle(isUltraWideActive ? Color(red: 248/255, green: 215/255, blue: 74/255) : Color.white)
+					.disabled( model.camera.isUsingFrontCaptureDevice ? true : false)
+					.opacity(model.camera.currentCameraPosition == .back ? 1 : 0.4)
 					
 					Button("\(String(format: "%.1f", wideZoomLevel).replacingOccurrences(of: ".0", with: ""))x") {
 						switchToWide()
@@ -193,7 +209,29 @@ struct CameraView: View {
 				}
 				
 				Button {
+					withAnimation(.easeInOut(duration: 0.2)) {
+						shootColdown = true
+					}
 					model.camera.takePhoto()
+					
+					if !model.camera.useFlash {
+						DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+							withAnimation(.easeInOut(duration: 0.1)) {
+								shutterOn = true
+							}
+						}
+						DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+							withAnimation(.easeInOut(duration: 0.1)) {
+								shutterOn = false
+							}
+						}
+					}
+					
+					DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
+						withAnimation(.easeInOut(duration: 0.2)) {
+							shootColdown = false
+						}
+					}
 				} label: {
 					Label {
 						Text("Take Photo")
@@ -208,8 +246,14 @@ struct CameraView: View {
 						}
 					}
 				}
-				
+				.opacity(shootColdown ? 0.4 : 1)
+				.animation(.easeInOut(duration: 0.2), value: shootColdown)
+				.disabled(shootColdown ? true : false)
+					
 				Button {
+					isUltraWideActive = false
+					wideZoomLevel = 1
+					switchToWide()
 					model.camera.switchCaptureDevice()
 				} label: {
 					Label("Switch Camera", systemImage: "arrow.triangle.2.circlepath")
@@ -274,7 +318,7 @@ struct CameraView: View {
 				}
 			}
 		} label: {
-			Label("Change Album", systemImage: "list.bullet")
+			Image(systemName: "list.bullet")
 				.foregroundColor(.white)
 		}
 	}
