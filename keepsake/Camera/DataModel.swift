@@ -122,11 +122,18 @@ fileprivate struct PhotoData {
 }
 
 fileprivate extension CIImage {
+	static let ciContext = CIContext()
+	
     var image: Image? {
-        let ciContext = CIContext()
-        guard let cgImage = ciContext.createCGImage(self, from: self.extent) else { return nil }
+		guard let cgImage = CIImage.ciContext.createCGImage(self, from: self.extent) else { return nil }
         return Image(decorative: cgImage, scale: 1, orientation: .up)
     }
+	
+//	var image: Image? {
+//		let ciContext = CIContext()
+//		guard let cgImage = ciContext.createCGImage(self, from: self.extent) else { return nil }
+//		return Image(decorative: cgImage, scale: 1, orientation: .up)
+//	}
 }
 
 fileprivate extension Image.Orientation {

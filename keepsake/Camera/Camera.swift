@@ -11,6 +11,8 @@ import UIKit
 import os.log
 
 class Camera: NSObject {
+	@Published var currentCameraPosition: AVCaptureDevice.Position = .back
+	
 	private let captureSession = AVCaptureSession()
 	private var isCaptureSessionConfigured = false
 	private var deviceInput: AVCaptureDeviceInput?
@@ -23,9 +25,6 @@ class Camera: NSObject {
 	}
 	
 	var useFlash = false
-	
-	// Current camera position (front/back)
-	private var currentCameraPosition: AVCaptureDevice.Position = .back
 	
 	private var allCaptureDevices: [AVCaptureDevice] {
 		AVCaptureDevice.DiscoverySession(
@@ -435,7 +434,15 @@ class Camera: NSObject {
 	
 	@objc
 	func updateForDeviceOrientation() {
-		//TODO: Figure out if we need this for anything.
+		let orientation = deviceOrientation
+		sessionQueue.async {
+		    // Update video preview orientation
+		    if let videoOutput = self.videoOutput,
+		       let videoConnection = videoOutput.connection(with: .video),
+		       videoConnection.isVideoOrientationSupported {
+		        videoConnection.videoOrientation = self.videoOrientationFor(orientation)
+		    }
+		}
 	}
 	
 	func takePhoto() {
@@ -460,7 +467,7 @@ class Camera: NSObject {
 			
 			if let photoOutputVideoConnection = photoOutput.connection(with: .video) {
 				if photoOutputVideoConnection.isVideoOrientationSupported {
-					photoOutputVideoConnection.videoOrientation = .portrait
+					photoOutputVideoConnection.videoOrientation = self.videoOrientationFor(self.deviceOrientation)
 				}
 			}
 			
@@ -500,7 +507,7 @@ extension Camera: AVCaptureVideoDataOutputSampleBufferDelegate {
 		guard let pixelBuffer = sampleBuffer.imageBuffer else { return }
 		
 		if connection.isVideoOrientationSupported {
-			connection.videoOrientation = .portrait
+			connection.videoOrientation = videoOrientationFor(deviceOrientation)
 		}
 		
 		addToPreviewStream?(CIImage(cvPixelBuffer: pixelBuffer))

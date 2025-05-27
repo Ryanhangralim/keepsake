@@ -55,7 +55,7 @@ struct AlbumQuery: EntityQuery {
 	// Helper function to get display title with emoji
 	private func getDisplayTitle(for originalTitle: String, albumId: String) -> String {
 		let albumMetadata = loadAlbumMetadata(for: albumId)
-		return originalTitle.replacingOccurrences(of: "🌅 ", with: "\(albumMetadata.emoji) ")
+		return originalTitle.replacingOccurrences(of: "🌅 ", with: "")
 	}
 	
 	// Load album metadata from shared UserDefaults (same as AlbumManager)

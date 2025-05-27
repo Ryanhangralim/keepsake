@@ -8,8 +8,11 @@ struct PhotoView: View {
 	
 	@State private var image: Image?
 	@State private var imageRequestID: PHImageRequestID?
+	@State private var isZoomed = false
+	@State private var showButtonsWhenZoomed = false
+	@State private var hideButtonsTimer: Timer?
 	@Environment(\.dismiss) var dismiss
-	
+	@Environment(\.presentationMode) var presentationMode
 	@State private var isSharing = false
 	@State private var isPreparingToShare = false
 	@State private var sharingItems: [Any] = []
@@ -17,25 +20,95 @@ struct PhotoView: View {
 	private let imageSize = CGSize(width: 1024, height: 1024)
 	
 	var body: some View {
-		Group {
-			if let image = image {
-				image
-					.resizable()
-					.scaledToFit()
-					.accessibilityLabel(asset.accessibilityLabel)
-			} else {
-				ProgressView()
+		ZStack {
+			VStack {
+				Spacer()
+				Spacer()
+				Spacer()
+				Spacer()
+				
+				Group {
+					if let image = image {
+						image
+							.resizable()
+							.scaledToFit()
+							.accessibilityLabel(asset.accessibilityLabel)
+							.clipShape(RoundedRectangle(cornerRadius: 14))
+							.padding(20)
+							.zoomable(
+								onZoomChange: { zoomed in
+									withAnimation(.easeInOut(duration: 0.3)) {
+										isZoomed = zoomed
+										if !zoomed {
+											showButtonsWhenZoomed = false
+											hideButtonsTimer?.invalidate()
+										}
+									}
+								},
+								onPanStart: {
+									if isZoomed {
+										withAnimation(.easeInOut(duration: 0.3)) {
+											showButtonsWhenZoomed = false
+										}
+										hideButtonsTimer?.invalidate()
+									}
+								},
+								onTap: {
+									if isZoomed {
+										withAnimation(.easeInOut(duration: 0.3)) {
+											showButtonsWhenZoomed.toggle()
+										}
+										hideButtonsTimer?.invalidate()
+										
+										// Only set timer if buttons are now visible
+										if showButtonsWhenZoomed {
+											hideButtonsTimer = Timer.scheduledTimer(withTimeInterval: 3.0, repeats: false) { _ in
+												withAnimation(.easeInOut(duration: 0.3)) {
+													showButtonsWhenZoomed = false
+												}
+											}
+										}
+									}
+								},
+								onZoomGesture: {
+									if isZoomed && showButtonsWhenZoomed {
+										withAnimation(.easeInOut(duration: 0.3)) {
+											showButtonsWhenZoomed = false
+										}
+										hideButtonsTimer?.invalidate()
+									}
+								}
+							)
+					} else {
+						ProgressView()
+					}
+				}
+				
+				Spacer()
+				Spacer()
+				Spacer()
+				Spacer()
+			}
+			
+			// Buttons overlay - positioned absolutely to not affect layout
+			VStack {
+				Spacer()
+				
+				if !isZoomed || showButtonsWhenZoomed {
+					buttonsView()
+						.transition(.opacity)
+				}
+				
+				Spacer()
+					.frame(height: 40) // Bottom padding
 			}
 		}
+		.navigationBarBackButtonHidden(true)
 		.frame(maxWidth: .infinity, maxHeight: .infinity)
 		.ignoresSafeArea()
-		.background(Color.secondary)
-		.navigationTitle("Photo")
+		.background(.black)
 		.navigationBarTitleDisplayMode(.inline)
-		.overlay(alignment: .bottom) {
-			buttonsView()
-				.offset(x: 0, y: -50)
-		}
+		.navigationTitle("Photo")
 		.sheet(isPresented: $isSharing) {
 			ActivityView(activityItems: sharingItems)
 		}
@@ -48,6 +121,19 @@ struct PhotoView: View {
 					}
 				}
 			}
+		}
+		.toolbar {
+			ToolbarItem(placement: .navigationBarLeading) {
+				Button(action: {
+					presentationMode.wrappedValue.dismiss()
+				}) {
+					Image(systemName: "chevron.left")
+				}
+			}
+		}
+		.foregroundColor(.white)
+		.onDisappear {
+			hideButtonsTimer?.invalidate()
 		}
 	}
 	
@@ -84,7 +170,7 @@ struct PhotoView: View {
 		.buttonStyle(.plain)
 		.labelStyle(.iconOnly)
 		.padding(EdgeInsets(top: 20, leading: 30, bottom: 20, trailing: 30))
-		.background(Color.secondary.colorInvert())
+		.background(Color(UIColor(red: 25/255, green: 25/255, blue: 25/255, alpha: 1)))
 		.cornerRadius(15)
 	}
 	
