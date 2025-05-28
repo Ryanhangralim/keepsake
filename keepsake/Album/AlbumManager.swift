@@ -16,7 +16,7 @@ class AlbumManager: ObservableObject {
 	@Published var thumbnailCache: [String: Image] = [:]
 	
 	private let albumPrefix = "🌅 "
-	private let sharedDefaults = UserDefaults(suiteName: "group.com.brats.keepsake")
+	private let sharedDefaults = UserDefaults(suiteName: "group.bratss.keep")
 	private var hasLoadedAlbums = false
 	
 	init() {

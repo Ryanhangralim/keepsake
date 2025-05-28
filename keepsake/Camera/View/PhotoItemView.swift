@@ -11,10 +11,11 @@ import Photos
 struct PhotoItemView: View {
     var asset: PhotoAsset
     var cache: CachedImageManager?
-    var imageSize: CGSize
+    var imageSize: Double
     
     @State private var image: Image?
     @State private var imageRequestID: PHImageRequestID?
+	@Environment(\.displayScale) private var displayScale
 
     var body: some View {
         
@@ -30,7 +31,14 @@ struct PhotoItemView: View {
         }
         .task {
             guard image == nil, let cache = cache else { return }
-            imageRequestID = await cache.requestImage(for: asset, targetSize: imageSize) { result in
+			
+			// Scale target size by display scale for crisp image
+			let scaledSize = CGSize(
+				width: imageSize * displayScale,
+				height: imageSize * displayScale
+			)
+			
+			imageRequestID = await cache.requestImage(for: asset, targetSize: scaledSize) { result in
                 Task {
                     if let result = result {
                         self.image = result.image

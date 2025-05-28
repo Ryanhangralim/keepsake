@@ -18,7 +18,7 @@
                BlueprintIdentifier = "6E9C65B52DD6C8E700A6A1A8"
                BuildableName = "keepsake.app"
                BlueprintName = "keepsake"
-               ReferencedContainer = "container:keepsake.xcodeproj">
+               ReferencedContainer = "container:Keepsake.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -47,7 +47,7 @@
             BlueprintIdentifier = "6E9C65B52DD6C8E700A6A1A8"
             BuildableName = "keepsake.app"
             BlueprintName = "keepsake"
-            ReferencedContainer = "container:keepsake.xcodeproj">
+            ReferencedContainer = "container:Keepsake.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -71,7 +71,7 @@
             BlueprintIdentifier = "6E9C65B52DD6C8E700A6A1A8"
             BuildableName = "keepsake.app"
             BlueprintName = "keepsake"
-            ReferencedContainer = "container:keepsake.xcodeproj">
+            ReferencedContainer = "container:Keepsake.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

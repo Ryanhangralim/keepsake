@@ -9,37 +9,45 @@ import SwiftUI
 import os.log
 
 struct PhotoCollectionView: View {
-	@ObservedObject var photoCollection : PhotoCollection
+	@ObservedObject var photoCollection: PhotoCollection
 	@EnvironmentObject var navigationManager: NavigationManager
 	@Environment(\.displayScale) private var displayScale
 	@Environment(\.presentationMode) var presentationMode
 	
-	private static let itemSpacing = 12.0
-	private static let itemCornerRadius = 15.0
-	private static let itemSize = CGSize(width: 90, height: 90)
+	private static let spacing: CGFloat = 12
+	private static let itemCornerRadius: CGFloat = 8
+	private static let columns: Int = 3
 	
-	private var imageSize: CGSize {
-		return CGSize(width: Self.itemSize.width * min(displayScale, 2), height: Self.itemSize.height * min(displayScale, 2))
+	private var imageSize: CGFloat {
+		let screenWidth = UIScreen.main.bounds.width
+		let totalSpacing = Self.spacing * CGFloat(Self.columns + 1)
+		return (screenWidth - totalSpacing) / CGFloat(Self.columns)
 	}
-	
-	private let columns = [
-		GridItem(.adaptive(minimum: itemSize.width, maximum: itemSize.height), spacing: itemSpacing)
-	]
 	
 	var body: some View {
 		ScrollView {
-			LazyVGrid(columns: columns, spacing: Self.itemSpacing) {
+			LazyVGrid(
+				columns: Array(repeating: GridItem(.flexible(), spacing: Self.spacing), count: Self.columns),
+				spacing: Self.spacing
+			) {
 				ForEach(photoCollection.photoAssets) { asset in
 					Button(action: {
 						navigationManager.path.append(asset)
 					}) {
-						photoItemView(asset: asset)
+						PhotoItemView(
+							asset: asset,
+							cache: photoCollection.cache,
+							imageSize: imageSize
+						)
+						.frame(width: imageSize, height: imageSize)
+						.cornerRadius(Self.itemCornerRadius)
+						.clipped()
 					}
 					.buttonStyle(.borderless)
 					.accessibilityLabel(asset.accessibilityLabel)
 				}
 			}
-			.padding([.vertical], Self.itemSpacing)
+			.padding(.all, Self.spacing)
 		}
 		.navigationBarTitleDisplayMode(.inline)
 		.navigationBarBackButtonHidden(true)
@@ -57,23 +65,6 @@ struct PhotoCollectionView: View {
 			PhotoView(asset: asset, cache: photoCollection.cache)
 		}
 		.statusBar(hidden: false)
-		.foregroundColor(.white) // Set the default text color to white
-	}
-	
-	private func photoItemView(asset: PhotoAsset) -> some View {
-		PhotoItemView(asset: asset, cache: photoCollection.cache, imageSize: imageSize)
-			.frame(width: Self.itemSize.width, height: Self.itemSize.height)
-			.clipped()
-			.cornerRadius(Self.itemCornerRadius)
-			.onAppear {
-				Task {
-					await photoCollection.cache.startCaching(for: [asset], targetSize: imageSize)
-				}
-			}
-			.onDisappear {
-				Task {
-					await photoCollection.cache.stopCaching(for: [asset], targetSize: imageSize)
-				}
-			}
+		.foregroundColor(.white)
 	}
 }

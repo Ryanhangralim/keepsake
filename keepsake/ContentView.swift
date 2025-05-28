@@ -10,7 +10,7 @@ import Photos
 import WidgetKit
 
 struct ContentView: View {
-	static let sharedDefaults = UserDefaults(suiteName: "group.com.brats.keepsake")
+	static let sharedDefaults = UserDefaults(suiteName: "group.bratss.keep")
 	@Environment(\.scenePhase) var scenePhase
 	@StateObject private var albumManager = AlbumManager()
 	@StateObject private var navigationManager = NavigationManager.shared
@@ -36,7 +36,7 @@ struct ContentView: View {
 		NavigationStack(path: $navigationManager.path) {
 			ScrollView {
 				LazyVGrid(columns: columns, spacing: 15) {
-					ForEach(albumManager.albums, id: \.localIdentifier) { album in
+					ForEach(albumManager.albums.reversed(), id: \.localIdentifier) { album in
 						NavigationLink(value: album) {
 							AlbumCardView(album: album)
 								.environmentObject(albumManager)
@@ -53,7 +53,11 @@ struct ContentView: View {
 										// Toggle
 										albumManager.toggleAlbumThumbnail(albumId: album.localIdentifier)
 									} label: {
-										Label("Change Cover", systemImage: "arrow.2.squarepath")
+										if albumManager.loadAlbumMetadata(for: album.localIdentifier).showThumbnail {
+											Label("Hide Cover", systemImage: "eye.slash")
+										} else {
+											Label("Show Cover", systemImage: "eye")
+											}
 									}
 									
 									Button(role: .destructive) {
