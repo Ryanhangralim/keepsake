@@ -111,7 +111,7 @@ struct SimpleEntry: TimelineEntry {
 	// Get album emoji from UserDefaults
 	private func getAlbumEmoji(for albumId: String?) -> String {
 		guard let albumId = albumId,
-			  let sharedDefaults = UserDefaults(suiteName: "group.com.brats.keepsake"),
+			  let sharedDefaults = UserDefaults(suiteName: "group.bratss.keepsake"),
 			  let albumsMetadata = sharedDefaults.dictionary(forKey: "AlbumsMetadata") as? [String: [String: String]],
 			  let metadata = albumsMetadata[albumId],
 			  let emoji = metadata["emoji"] else {
@@ -123,7 +123,7 @@ struct SimpleEntry: TimelineEntry {
 	// Get album color from UserDefaults
 	private func getAlbumColorHex(for albumId: String?) -> String {
 		guard let albumId = albumId,
-			  let sharedDefaults = UserDefaults(suiteName: "group.com.brats.keepsake"),
+			  let sharedDefaults = UserDefaults(suiteName: "group.bratss.keepsake"),
 			  let albumsMetadata = sharedDefaults.dictionary(forKey: "AlbumsMetadata") as? [String: [String: String]],
 			  let metadata = albumsMetadata[albumId],
 			  let colorHex = metadata["colorHex"] else {
@@ -134,7 +134,7 @@ struct SimpleEntry: TimelineEntry {
 	
 	private func getShowThumbnail(for albumId: String?) -> Bool {
 		guard let albumId = albumId,
-			  let sharedDefaults = UserDefaults(suiteName: "group.com.brats.keepsake"),
+			  let sharedDefaults = UserDefaults(suiteName: "group.bratss.keepsake"),
 			  let albumsMetadata = sharedDefaults.dictionary(forKey: "AlbumsMetadata") as? [String: [String: Any]],
 			  let metadata = albumsMetadata[albumId],
 			  let showThumbnail = metadata["showThumbnail"] as? Bool else {
@@ -149,17 +149,60 @@ struct KipsekWidgetEntryView: View {
 	@Environment(\.colorScheme) var colorScheme
 	var entry: Provider.Entry
 	
-	fileprivate func notAssignedView() -> some View {VStack(spacing: 8) {
-			Text("Tap & Hold -> Edit Widget")
-			.font(.caption)
-			.fontWeight(.semibold)
-			.foregroundColor(.white)
-			.multilineTextAlignment(.leading)
+	var body: some View {
+		VStack {
+			if let album = entry.configuration.album {
+				if entry.showThumbnail{
+					showThumbnailOnView(album)
+				} else {
+					showThumbnailOffView(album, "Tap to open camera")
+				}
+			} else {
+				notAssignedView()
+			}
+		}
+		.frame(maxWidth: .infinity, maxHeight: .infinity)
+		.widgetURL(URL(string: "keepsake://select-folder?folder=\(entry.configuration.album?.id ?? "Failed")"))
+		.containerBackground(for: .widget) {
+			if entry.showThumbnail && entry.albumPhoto != nil {
+				Color.clear.ignoresSafeArea()
+			} else {
+				Color(hex: "#161616")
+			}
+		}
+	}
+	
+	fileprivate func notAssignedView() -> some View {
+		VStack(spacing: 2) {
+//			Text("Tap & Hold -> Edit Widget")
+//			.font(.caption)
+//			.fontWeight(.semibold)
+//			.foregroundColor(.white)
+//			.multilineTextAlignment(.leading)
+			Text("Keepsake")
+				.font(.system(size: 26))
+				.fontWeight(.heavy)
+			Text("Set an album")
+				.font(.system(size: 8))
+				.fontWeight(.light)
+		}
+		.frame(maxWidth: .infinity, maxHeight: .infinity)
+		.overlay {
+			HStack {
+				Spacer()
+				VStack {
+					Image(uiImage: UIImage(named: "transparentIcon") ?? UIImage())
+						.resizable()
+						.frame(width: 28, height: 28)
+						.offset(x: 5, y: -5)
+					Spacer()
+				}
+			}
 		}
 	}
 	
 	fileprivate func showThumbnailOffView(_ album: AlbumEntity, _ alert: String) -> some View {
-		VStack(alignment: .center, spacing: 4) {
+		VStack(alignment: .center, spacing: 2) {
 //			Spacer()
 //			HStack {
 //				VStack(alignment: .leading, spacing: 2) {
@@ -178,17 +221,45 @@ struct KipsekWidgetEntryView: View {
 //				Spacer()
 //			}
 			
+//			Text(album.title)
+//				.font(.title2)
+//				.fontWeight(.semibold)
+//				.foregroundColor(.white)
+//				.multilineTextAlignment(.leading)
+//				.lineLimit(1)
+//			
+//			Text(alert)
+//				.font(.caption2)
+//				.fontWeight(.light)
+//				.foregroundStyle(.white)
+//				//			Text("Tap & Hold -> Edit Widget")
+//				//			.font(.caption)
+//				//			.fontWeight(.semibold)
+//				//			.foregroundColor(.white)
+//				//			.multilineTextAlignment(.leading)
+			
 			Text(album.title)
-				.font(.title2)
-				.fontWeight(.semibold)
-				.foregroundColor(.white)
+				.font(.system(size: 26))
+				.fontWeight(.heavy)
 				.multilineTextAlignment(.leading)
 				.lineLimit(1)
-			
 			Text(alert)
-				.font(.caption2)
+				.font(.system(size: 8))
 				.fontWeight(.light)
-				.foregroundStyle(.white)
+			
+		}
+		.frame(maxWidth: .infinity, maxHeight: .infinity)
+		.overlay {
+			HStack {
+				Spacer()
+				VStack {
+					Image(uiImage: UIImage(named: "transparentIcon") ?? UIImage())
+						.resizable()
+						.frame(width: 28, height: 28)
+						.offset(x: 5, y: -5)
+					Spacer()
+				}
+			}
 		}
 	}
 	
@@ -221,7 +292,7 @@ struct KipsekWidgetEntryView: View {
 									.multilineTextAlignment(.leading)
 									.lineLimit(1)
 								
-								Text("tap to open camera")
+								Text("Tap to open camera")
 									.font(.caption2)
 									.fontWeight(.light)
 									.foregroundStyle(.white)
@@ -235,37 +306,14 @@ struct KipsekWidgetEntryView: View {
 			)
 		} else {
 			// Fall back if photo is nil
-			return AnyView(showThumbnailOffView(album, "tap to open camera"))
-		}
-	}
-	
-	var body: some View {
-		VStack {
-			if let album = entry.configuration.album {
-				if entry.showThumbnail{
-					showThumbnailOnView(album)
-				} else {
-					showThumbnailOffView(album, "tap to open camera")
-				}
-			} else {
-				notAssignedView()
-			}
-		}
-		.frame(maxWidth: .infinity, maxHeight: .infinity)
-		.widgetURL(URL(string: "keepsake://select-folder?folder=\(entry.configuration.album?.id ?? "Failed")"))
-		.containerBackground(for: .widget) {
-			if entry.showThumbnail && entry.albumPhoto != nil {
-				Color.clear.ignoresSafeArea()
-			} else {
-				Color(CGColor(red: 28/255, green: 28/255, blue: 28/255, alpha: 1))
-			}
+			return AnyView(showThumbnailOffView(album, "Tap to open camera"))
 		}
 	}
 }
 
 struct KipsekWidget: Widget {
 	var body: some WidgetConfiguration {
-		AppIntentConfiguration(kind: "group.com.brats.keepsake", intent: ConfigurationAppIntent.self, provider: Provider()) { entry in
+		AppIntentConfiguration(kind: "group.bratss.keepsake", intent: ConfigurationAppIntent.self, provider: Provider()) { entry in
 			KipsekWidgetEntryView(entry: entry)
 		}
 		.configurationDisplayName("Keepsake")

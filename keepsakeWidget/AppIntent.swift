@@ -25,7 +25,7 @@ struct AlbumEntity: AppEntity, Equatable, Hashable {
 
 struct AlbumQuery: EntityQuery {
 	// Use shared UserDefaults to access album metadata
-	private let sharedDefaults = UserDefaults(suiteName: "group.com.brats.keepsake")
+	private let sharedDefaults = UserDefaults(suiteName: "group.bratss.keepsake")
 	
 	func entities(for identifiers: [String]) async throws -> [AlbumEntity] {
 		identifiers.compactMap { id in

@@ -50,7 +50,7 @@ struct AlbumCardView: View {
 									.multilineTextAlignment(.leading)
 									.lineLimit(1)
 								
-								Text("tap to open camera")
+								Text("Tap to open camera")
 									.font(.caption2)
 									.fontWeight(.light)
 									.foregroundStyle(.white)

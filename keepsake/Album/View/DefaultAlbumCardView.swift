@@ -14,25 +14,48 @@ struct DefaultAlbumCardView: View {
 	var body: some View {
 		ZStack {
 			Rectangle()
-				.fill(color)
+				.fill(Color(hex: "#161616"))
 				.frame(width: 165, height: 165)
 				.cornerRadius(15)
 			
-			VStack(alignment: .center, spacing: 4) {
-				Text(title)
-					.font(.title)
-					.fontWeight(.bold)
-					.foregroundColor(.white)
-					.multilineTextAlignment(.center)
-					.lineLimit(1)
+			VStack(alignment: .center, spacing: 2) {
+//				Text(title)
+//					.font(.title)
+//					.fontWeight(.bold)
+//					.foregroundColor(.white)
+//					.multilineTextAlignment(.center)
+//					.lineLimit(1)
+//				
+//				Text("Tap to open camera")
+//					.font(.caption2)
+//					.fontWeight(.light)
+//					.foregroundColor(.white)
 				
-				Text("tap to open camera")
-					.font(.caption2)
+				Text(title)
+					.font(.system(size: 26))
+					.fontWeight(.heavy)
+					.multilineTextAlignment(.leading)
+					.lineLimit(1)
+				Text("Tap to open camera")
+					.font(.system(size: 8))
 					.fontWeight(.light)
-					.foregroundColor(.white)
 			}
+			.padding(30)
+			.foregroundStyle(.white)
 			.multilineTextAlignment(.center)
 			.frame(maxWidth: .infinity, maxHeight: .infinity)
+			.overlay {
+				HStack {
+					Spacer()
+					VStack {
+						Image(uiImage: UIImage(named: "transparentIcon") ?? UIImage())
+							.resizable()
+							.frame(width: 28, height: 28)
+						Spacer()
+					}
+				}
+				.padding()
+			}
 		}
 	}
 }

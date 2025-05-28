@@ -103,6 +103,7 @@ struct CameraView: View {
 			
 			buttonsView()
 		}
+		.sensoryFeedback(.impact(weight: .heavy, intensity: 4), trigger: shutterOn)
 		.navigationBarBackButtonHidden(true)
 		.navigationBarTitleDisplayMode(.inline)
 		.task {

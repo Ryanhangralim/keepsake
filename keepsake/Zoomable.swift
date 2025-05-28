@@ -9,6 +9,7 @@
 #if os(iOS)
 
 import SwiftUI
+import UIKit
 
 struct ZoomableModifier: ViewModifier {
 	let minZoomScale: CGFloat
@@ -67,7 +68,6 @@ struct ZoomableModifier: ViewModifier {
 	private var magnificationGesture: some Gesture {
 		MagnifyGesture(minimumScaleDelta: 0)
 			.onChanged { value in
-				onZoomGesture?()
 				let newTransform = CGAffineTransform.anchoredScale(
 					scale: value.magnification,
 					anchor: value.startAnchor.scaledBy(contentSize)
@@ -76,9 +76,15 @@ struct ZoomableModifier: ViewModifier {
 				withAnimation(.interactiveSpring) {
 					transform = lastTransform.concatenating(newTransform)
 				}
+				
+				print(transform.a)
 			}
 			.onEnded { _ in
 				onEndGesture()
+				if transform.a <= 1.0 {
+					let impact = UIImpactFeedbackGenerator(style: .medium)
+					impact.impactOccurred()
+				}
 			}
 	}
 	

@@ -10,7 +10,7 @@ import Photos
 import WidgetKit
 
 struct ContentView: View {
-	static let sharedDefaults = UserDefaults(suiteName: "group.com.brats.keepsake")
+	static let sharedDefaults = UserDefaults(suiteName: "group.bratss.keepsake")
 	@Environment(\.scenePhase) var scenePhase
 	@StateObject private var albumManager = AlbumManager()
 	@StateObject private var navigationManager = NavigationManager.shared
@@ -34,48 +34,70 @@ struct ContentView: View {
 	
 	var body: some View {
 		NavigationStack(path: $navigationManager.path) {
-			ScrollView {
-				LazyVGrid(columns: columns, spacing: 15) {
-					ForEach(albumManager.albums, id: \.localIdentifier) { album in
-						NavigationLink(value: album) {
-							AlbumCardView(album: album)
-								.environmentObject(albumManager)
-								.contextMenu {
-									Button {
-										// Rename action
-										contextMenuAlbum = album
-										showingRenameAlbumAlert = true
-									} label: {
-										Label("Rename", systemImage: "pencil")
-									}
-									
-									Button {
-										// Toggle
-										albumManager.toggleAlbumThumbnail(albumId: album.localIdentifier)
-									} label: {
-										Label("Change Cover", systemImage: "arrow.2.squarepath")
-									}
-									
-									Button(role: .destructive) {
-										// Delete
-										albumManager.deleteAlbumMetadata(for: album.localIdentifier)
-										albumManager.deleteAlbum(album: album)
-									} label: {
-										Label("Delete", systemImage: "trash")
-									}
-								}
+			ZStack {
+				if albumManager.albums.isEmpty {
+					GeometryReader { geo in
+						HStack {
+							Spacer()
+							VStack {
+								Spacer()
+								Image("no-folders")
+									.resizable()
+									.aspectRatio(contentMode: .fit)
+									.frame(width: geo.size.width * 0.7)
+								Spacer()
+								Spacer()
+							}
+							Spacer()
 						}
 					}
 				}
-				.padding(.horizontal)
-				.padding(.top, 10)
+				
+				ScrollView {
+					LazyVGrid(columns: columns, spacing: 15) {
+						ForEach(albumManager.albums, id: \.localIdentifier) { album in
+							NavigationLink(value: album) {
+								AlbumCardView(album: album)
+									.environmentObject(albumManager)
+									.contextMenu {
+										Button {
+											// Rename action
+											contextMenuAlbum = album
+											showingRenameAlbumAlert = true
+										} label: {
+											Label("Rename", systemImage: "pencil")
+										}
+										
+										Button {
+											// Toggle
+											albumManager.toggleAlbumThumbnail(albumId: album.localIdentifier)
+										} label: {
+											Label("Change Cover", systemImage: "arrow.2.squarepath")
+										}
+										
+										Button(role: .destructive) {
+											// Delete
+											albumManager.deleteAlbumMetadata(for: album.localIdentifier)
+											albumManager.deleteAlbum(album: album)
+										} label: {
+											Label("Delete", systemImage: "trash")
+										}
+									}
+							}
+						}
+					}
+					.padding(.horizontal)
+					.padding(.top, 10)
+				}
 			}
+			
+			
 			.navigationBarTitleDisplayMode(.large)
 			.navigationTitle("My Albums")
-            .navigationDestination(for: PHAssetCollection.self) { album in
-                let refreshedAlbum = PHAssetCollection.fetchAssetCollections(withLocalIdentifiers: [album.localIdentifier], options: nil).firstObject ?? album
-                CameraView(model: DataModel(album: refreshedAlbum))
-            }
+			.navigationDestination(for: PHAssetCollection.self) { album in
+				let refreshedAlbum = PHAssetCollection.fetchAssetCollections(withLocalIdentifiers: [album.localIdentifier], options: nil).firstObject ?? album
+				CameraView(model: DataModel(album: refreshedAlbum))
+			}
 			.toolbar {
 				ToolbarItem(placement: .navigationBarTrailing) {
 					Button {
@@ -172,5 +194,15 @@ struct ContentView: View {
 		let userAlbums = PHAssetCollection.fetchAssetCollections(withLocalIdentifiers: [identifier], options: nil)
 		return userAlbums.firstObject?.localizedTitle ?? "No Folder Selected"
 	}
+}
+
+fileprivate extension UINavigationBar {
 	
+	static func applyCustomAppearance() {
+		let appearance = UINavigationBarAppearance()
+		appearance.backgroundEffect = UIBlurEffect(style: .systemUltraThinMaterial)
+		UINavigationBar.appearance().standardAppearance = appearance
+		UINavigationBar.appearance().compactAppearance = appearance
+		UINavigationBar.appearance().scrollEdgeAppearance = appearance
+	}
 }

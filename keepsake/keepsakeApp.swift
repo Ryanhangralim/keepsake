@@ -15,27 +15,41 @@ struct keepsakeApp: App {
 		UINavigationBar.appearance().titleTextAttributes = [.foregroundColor: UIColor.white]
 	}
 	
-    var body: some Scene {
-        WindowGroup {
-            ContentView()
-                .onOpenURL { url in
-                    handleDeepLink(url)
-                }
-        }
-    }
-    
-    private func handleDeepLink(_ url: URL) {
-        guard url.scheme == "keepsake",
-              url.host == "select-folder",
-              let components = URLComponents(url: url, resolvingAgainstBaseURL: true),
-              let folderQuery = components.queryItems?.first(where: { $0.name == "folder" })?.value
-        else {
-            print("Invalid deep link: \(url)")
-            return
-        }
-        
-        UserDefaults(suiteName: "group.com.brats.keepsake")?.set(folderQuery, forKey: "selectedFolder")
-    }
+	var body: some Scene {
+		WindowGroup {
+			RootView()
+				.onOpenURL { url in
+					handleDeepLink(url)
+				}
+		}
+	}
+	
+	private func handleDeepLink(_ url: URL) {
+		guard url.scheme == "keepsake",
+			  url.host == "select-folder",
+			  let components = URLComponents(url: url, resolvingAgainstBaseURL: true),
+			  let folderQuery = components.queryItems?.first(where: { $0.name == "folder" })?.value
+		else {
+			print("Invalid deep link: \(url)")
+			return
+		}
+		
+		UserDefaults(suiteName: "group.bratss.keepsake")?.set(folderQuery, forKey: "selectedFolder")
+	}
+}
+
+struct RootView: View {
+	@State private var hasCompletedOnboarding = false
+	
+	var body: some View {
+		if hasCompletedOnboarding {
+			ContentView()
+		} else {
+			OnboardingView(onComplete: {
+				hasCompletedOnboarding = true
+			})
+		}
+	}
 }
 
 fileprivate extension UINavigationBar {
